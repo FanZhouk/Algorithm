@@ -110,12 +110,11 @@ public class Queue<E> implements Iterable<E>{
 		}
 
 		/**
-		 * 不实现移除方法
+		 * 队列不实现移除方法
 		 */
 		@Override
 		public void remove() {
 		}
-
 	}
 	
 	/**

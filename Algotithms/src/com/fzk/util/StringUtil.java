@@ -31,7 +31,7 @@ public class StringUtil {
 			else if (val == '+' || val == '-' || val == '*' || val == '/') // 四则运算符号，压入操作符栈中
 				opts.push(val);
 			else if (String.valueOf(val).matches("\\d")) { // 数字，压入数字栈中
-				double realVal = Integer.parseInt(String.valueOf(val)); 
+				double realVal = Integer.parseInt(String.valueOf(val));
 				// TODO 处理多位数字的情况
 				vals.push(realVal);
 			} else if (val == ')') { // 右括号，进行计算
