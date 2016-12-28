@@ -40,19 +40,20 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * 2-Sum问题
+	 * 2-Sum问题（二分查找法）
 	 * 默认数组中没有重复数字
 	 * 
 	 * 来源：1.4.5.1节
 	 * 复杂度：NlgN
 	 * @param arr 查询的数组
-	 * @return 数组中两个数字和为0的组数
+	 * @param target 指定的和
+	 * @return 数组中两个数字和为target的组数
 	 */
-	public static int twoSum(int[] arr) {
+	public static int twoSum(int[] arr, int target) {
 		Arrays.sort(arr); // 归并排序，NlgN
 		int count = 0;
 		for (int i = 0; i < arr.length; i++) {
-			if (binarySearch(arr, -arr[i]) > i) { // 二分查找，lgN
+			if (binarySearch(arr, target - arr[i], i, arr.length - 1) > i) { // 二分查找，lgN
 				count++;
 			}
 		}
@@ -60,26 +61,83 @@ public class ArrayUtil {
 	}
 
 	/**
+	 * 2-sum问题（前后游标法）
+	 * 
+	 * @param arr
+	 * @param target
+	 * @return
+	 */
+	public static int twoSum2(int[] arr, int target) {
+		Arrays.sort(arr); // NlgN
+		int count = 0;
+		int low = 0; // 定义前后游标
+		int high = arr.length - 1;
+		while (low < high) {
+			int result = arr[low] + arr[high];
+			if (result == target) {
+				count++;
+				// 确保前后游标不会重复
+				while (low < high && arr[low] == arr[low + 1]) low++;
+				while (low < high && arr[high] == arr[high - 1]) high--;
+				low++;
+				high--;
+			} else if (result < target) {
+				low++;
+			} else {
+				high--;
+			}
+		}
+		return count;
+	}
+	
+	/**
 	 * 3-Sum问题
 	 * 
-	 * 来源：1.4.5.2节
-	 * 复杂度：N^2lgN
+	 * 来源：练习1.4.15
+	 * 复杂度：N^2
 	 * @param arr 查询的数组
-	 * @return 数组中三个数字和为0的组数
+	 * @param target 指定的和
+	 * @return 数组中三个数字和为target的组数
 	 */
-	public static int threeSum(int[] arr) {
+	// 思路：3-sum问题可以转化为2-sum问题。
+	// 首先，取数组中第一个数字，作为基准数m，下一步就是在后面的数字中的2-sum问题：找到两个数字和为target-m。
+	// 接着基数遍历整个数组即可。
+	// 由于要确保没有重复结果，因此：1)基数不能重复，2)首尾游标不能重复。要在每次这3个数字改变的时候进行判断。
+	private static int threeSum(int arr[], int target) {
+		if (arr == null || arr.length < 3)
+			return 0;
 		Arrays.sort(arr);
 		int count = 0;
-		for (int i = 0; i < arr.length; i++)
-			for (int j = i + 1; j < arr.length; j++)
-				if (binarySearch(arr, -arr[i] - arr[j]) > j)
+		for (int i = 0; i < arr.length - 2; i++) { // i是基准数
+			if (i > 0 && arr[i] == arr[i - 1]) // 确保基准数不会重复
+				continue;
+
+			int low = i + 1; // 从基准数开始到数组结束，首尾开始扫描
+			int high = arr.length - 1;
+			while (low < high) {
+				int result = arr[i] + arr[low] + arr[high];
+				if (result == target) { // 找到了
+					System.out.println(arr[i] + "+" + arr[low] + "+" + arr[high]);
 					count++;
+
+					while (low < high && arr[low] == arr[low + 1]) low++;	// 确保low游标不会重复
+					while (low < high && arr[high] == arr[high - 1]) high--;	// 确保high游标不会重复
+
+					low++;
+					high--;
+				} else if (result < target) { // 计算结果较小，low向后移一位
+					low++;
+				} else { // 计算结果较大，high向前移一位
+					high--;
+				}
+			}
+		}
 		return count;
 	}
 
 	public static void main(String[] args) {
 		 int arr[] = { -4, 6, 5, 1, 2, 8, 0, 3, -10, 4, 10, -2 };
 		//int arr[] = { 0, 2, 4, 6, 9, 11, 17, 30, 31, 50 };
-		System.out.println(threeSum(arr));
+		System.out.println(threeSum(arr,0));
 	}
 }
