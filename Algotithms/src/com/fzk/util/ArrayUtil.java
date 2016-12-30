@@ -135,6 +135,32 @@ public class ArrayUtil {
 		return count;
 	}
 
+	/**
+	 * 转换为标准格式
+	 * 
+	 * @param arr 要转换的数组
+	 * @return 转换后的字符串
+	 */
+	public static String toString(int[] arr) {
+		StringBuffer sb = new StringBuffer("[");
+		for (int i = 0; i < arr.length; i++) {
+			sb.append(arr[i]);
+			if (i != arr.length - 1)
+				sb.append(", ");
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+
+	/**
+	 * 标准格式打印
+	 * 
+	 * @param arr 要打印的数组
+	 */
+	public static void print(int[] arr) {
+		System.out.println(toString(arr));
+	}
+
 	public static void main(String[] args) {
 		 int arr[] = { -4, 6, 5, 1, 2, 8, 0, 3, -10, 4, 10, -2 };
 		//int arr[] = { 0, 2, 4, 6, 9, 11, 17, 30, 31, 50 };
