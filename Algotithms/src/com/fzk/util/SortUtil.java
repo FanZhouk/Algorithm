@@ -57,75 +57,138 @@ public class SortUtil {
 	}
 
 	/**
-	 * 希尔排序
+	 * 希尔排序（较直观的写法）
 	 * 
-	 * @param arr
+	 * 主要思想：分组，组内多次插入排序。
+	 * 如原数组长度为10，设定步长为10/2=5，则对索引为(0,5),(1,6),(2,7),(3,8),(4,9)的元素进行插入排序；
+	 * 接着缩短步长为5/2=2，则对索引为(0,2,4,6,8),(1,3,5,7,9)的元素进行插入排序；
+	 * 直至步长缩短为1，对整个数组进行插入排序，则希尔排序完成。
+	 * 
+	 * @param arr 要排序的数组
 	 */
 	public static void shellSort(int[] arr) {
-		for (int h = arr.length >> 1; h > 0; h/=3) { // h为增量，构成一个h有序数组
-			for (int i = h; i < arr.length; i += h) {
-				if (arr[i] > arr[i - h])
-					continue;
-				int ind = i;
-				int val = arr[i];
-				while (ind > 0 && arr[ind - h] > val) {
-					arr[ind] = arr[ind - h];
-					ind -= h;
+		int gap = arr.length >> 1; // 步长
+		for (; gap > 0; gap >>= 1) { // 缩短步长
+			for (int count = 0; count < gap; count++) { // 分组，count为距离第一组的长度
+				for (int i = gap + count; i < arr.length; i += gap) { // 组内插入排序
+					if (arr[i] < arr[i - gap]) {
+						int ind = i - gap;
+						int val = arr[i];
+						while (ind >= 0 && arr[ind] > val) {
+							arr[ind + gap] = arr[ind];
+							ind -= gap;
+						}
+						arr[ind + gap] = val;
+					}
 				}
-				arr[ind] = val;
 			}
 		}
 	}
 
-	public static void shellSort3(int[] arr) {
-		for (int h = arr.length >> 1; h > 0; h >>= 1) { // h为步长（增量），构成一个h有序数组
-			for (int k = 0; k < h; k++) { // k为h内递增的量
-				for (int i = h + k; i < arr.length; i += h) {
-					if (arr[i] > arr[i - h])
-						continue;
-					int ind = i - h;
-					int val = arr[i];
-					while (ind > 0 && arr[ind] > val) {
-						arr[ind + h] = arr[ind];
-						ind -= h;
-					}
-					arr[ind + h] = val;
-				}
-			}
-		}
-	}
-	
 	/**
-	 * 希尔排序（书中）
+	 * 希尔排序（优化步长策略）
+	 * 
+	 * 初始步长变为3的倍数+1，缩短步长策略变为缩短为原来的1/3。
+	 * 实验证明这种步长策略的效率要比第一种好。
+	 * 
+	 * @param arr 要排序的数组
 	 */
 	public static void shellSort2(int[] arr) {
-		int i,pointer;
-		int index = arr.length;
-		int h = index / 2;
-		while (h != 0) {
-			for (i = h; i < index; i++) {
-				int tmp = arr[i];
-				pointer = i - h;
-				while (tmp < arr[pointer] && pointer >= 0 && pointer <= index) {
-					arr[pointer + h] = arr[pointer];
-					pointer = pointer - h;
-					if (pointer < 0 || pointer > index) {
-						break;
+		int gap = 1; // 步长
+		while (gap < arr.length / 3) // 设定初始步长(1,4,13,40,121,364,1093...)
+			gap = 3 * gap + 1;
+		for (; gap > 0; gap /= 3) { // 缩短步长，策略为缩短为原来的1/3
+			for (int count = 0; count < gap; count++) { // 分组，count为距离第一组的长度
+				for (int i = gap + count; i < arr.length; i += gap) { // 组内插入排序
+					if (arr[i] < arr[i - gap]) {
+						int ind = i - gap;
+						int val = arr[i];
+						while (ind >= 0 && arr[ind] > val) {
+							arr[ind + gap] = arr[ind];
+							ind -= gap;
+						}
+						arr[ind + gap] = val;
 					}
-					arr[pointer + h] = tmp;
-					
 				}
-				h = h / 2;
 			}
 		}
 	}
-	
-	
+
+	/**
+	 * 希尔排序（改变比较的顺序，减少循环次数）
+	 * 
+	 * 来源：http://blog.csdn.net/morewindows/article/details/6668714
+	 * 
+	 * @param arr
+	 */
+	public static void shellSort3(int[] arr) {
+		int gap = arr.length >> 1;
+		for (; gap > 0; gap >>= 1) {
+			for (int j = gap; j < arr.length; j++) {
+				if (arr[j] < arr[j - gap]) {
+					int tmp = arr[j];
+					int k = j - gap;
+					while (k >= 0 && arr[k] > tmp) {
+						arr[k + gap] = arr[k];
+						k -= gap;
+					}
+					arr[k + gap] = tmp;
+				}
+			}
+		}
+	}
+
+	/**
+	 * 归并排序（自顶向下）
+	 * 
+	 * 主要思想：递归，合并。
+	 * 若原数组长度为n，第一步归并排序 0 ~ n/2，第二步排序 n/2+1 ~ n-1，最后合并两个有序子数组。
+	 * 
+	 * @param arr
+	 */
+	public static void mergeSort(int[] arr) {
+		int[] tmp = new int[arr.length];
+		mergeSort(arr, 0, arr.length - 1, tmp);
+	}
+
+	private static void mergeSort(int[] arr, int low, int high, int[] tmp) {
+		if (low >= high)
+			return;
+		int mid = (low + high) >> 1;
+		mergeSort(arr, low, mid, tmp); // 递归左半部分
+		mergeSort(arr, mid + 1, high, tmp); // 递归右半部分
+		merge(arr, low, mid, high, tmp); // 合并
+	}
+
+	// 融合一个数组的两个有序子数组（low ~ mid 和 mid+1 ~ high 分别为两个有序子数组）
+	// tmp为临时数组，不传递任何信息，只是为了防止重复创建，造成空间浪费
+	public static void merge(int[] arr, int low, int mid, int high, int[] tmp) {
+		int l = low, m = mid + 1; // 对两个子数组的索引
+		int ind = low; // 对临时数组的索引
+
+		for (; l <= mid && m <= high; ind++) {
+			if (arr[l] < arr[m])
+				tmp[ind] = arr[l++];
+			else
+				tmp[ind] = arr[m++];
+		}
+		while (l <= mid)
+			tmp[ind++] = arr[l++];
+		while (m <= high)
+			tmp[ind++] = arr[m++];
+
+		// 此时临时数组中已经是融合好的元素，把它们放回原数组即可
+		for (int i = low; i <= high; i++)
+			arr[i] = tmp[i];
+	}
+
 	public static void main(String[] args) {
 		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
 		ArrayUtil.print(arr);
-		SortUtil.selectionSort(arr);
+		//SortUtil.selectionSort(arr);
 		//SortUtil.insertionSort(arr);
+		//SortUtil.shellSort(arr);
+		SortUtil.mergeSort(arr);
 		ArrayUtil.print(arr);
 	}
 }
