@@ -16,7 +16,7 @@ public class SortUtil {
 	 * @param arr  待排序的数组
 	 */
 	public static void selectionSort(int[] arr) {
-		for (int i = 0; i < arr.length; i++) {
+		for (int i = 0; i < arr.length - 1; i++) {
 			int minIndex = i;
 			int minValue = arr[i];
 			for (int j = i + 1; j < arr.length; j++) {
@@ -64,9 +64,8 @@ public class SortUtil {
 				continue;
 			int val = arr[i]; // 要插入的数字
 			int ind = i; // 要插入的位置
-			while (ind > low && arr[ind - 1] > val) {
+			for (; ind > low && arr[ind - 1] > val; ind--) {
 				arr[ind] = arr[ind - 1];
-				ind--;
 			}
 			arr[ind] = val;
 		}
@@ -229,10 +228,11 @@ public class SortUtil {
 	public static void main(String[] args) {
 		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
 		ArrayUtil.print(arr);
-		//SortUtil.selectionSort(arr);
-		//SortUtil.insertionSort(arr);
-		//SortUtil.shellSort(arr);
-		SortUtil.mergeSort(arr);
+		// SortUtil.selectionSort(arr);
+		// SortUtil.insertionSort(arr);
+		// SortUtil.shellSort(arr);
+		// SortUtil.mergeSort(arr);
+		SortUtil.quickSort(arr);
 		ArrayUtil.print(arr);
 	}
 }
