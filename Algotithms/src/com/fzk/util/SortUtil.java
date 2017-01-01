@@ -56,6 +56,22 @@ public class SortUtil {
 		}
 	}
 
+	// 带索引的插入排序，对小数组尤其适用
+	// 可用于归并、快排等算法内部，排序小子数组的时候，以缩减递归深度
+	public static void insertionSort(int[] arr, int low, int high) {
+		for (int i = low + 1; i <= high; i++) {
+			if (arr[i] >= arr[i - 1])
+				continue;
+			int val = arr[i]; // 要插入的数字
+			int ind = i; // 要插入的位置
+			while (ind > low && arr[ind - 1] > val) {
+				arr[ind] = arr[ind - 1];
+				ind--;
+			}
+			arr[ind] = val;
+		}
+	}
+
 	/**
 	 * 希尔排序（较直观的写法）
 	 * 
@@ -85,14 +101,9 @@ public class SortUtil {
 		}
 	}
 
-	/**
-	 * 希尔排序（优化步长策略）
-	 * 
-	 * 初始步长变为3的倍数+1，缩短步长策略变为缩短为原来的1/3。
-	 * 实验证明这种步长策略的效率要比第一种好。
-	 * 
-	 * @param arr 要排序的数组
-	 */
+	// 希尔排序（优化步长策略）
+	// 初始步长变为3的倍数+1，缩短步长策略变为缩短为原来的1/3。
+	// 实验证明这种步长策略的效率要比第一种好。
 	public static void shellSort2(int[] arr) {
 		int gap = 1; // 步长
 		while (gap < arr.length / 3) // 设定初始步长(1,4,13,40,121,364,1093...)
@@ -114,13 +125,8 @@ public class SortUtil {
 		}
 	}
 
-	/**
-	 * 希尔排序（改变比较的顺序，减少循环次数）
-	 * 
-	 * 来源：http://blog.csdn.net/morewindows/article/details/6668714
-	 * 
-	 * @param arr
-	 */
+	// 希尔排序（改变比较的顺序，减少循环次数）
+	// 来源：http://blog.csdn.net/morewindows/article/details/6668714
 	public static void shellSort3(int[] arr) {
 		int gap = arr.length >> 1;
 		for (; gap > 0; gap >>= 1) {
@@ -141,6 +147,7 @@ public class SortUtil {
 	/**
 	 * 归并排序（自顶向下）
 	 * 
+	 * 复杂度：~NlgN
 	 * 主要思想：递归，合并。
 	 * 若原数组长度为n，第一步归并排序 0 ~ n/2，第二步排序 n/2+1 ~ n-1，最后合并两个有序子数组。
 	 * 
@@ -182,6 +189,43 @@ public class SortUtil {
 			arr[i] = tmp[i];
 	}
 
+	/**
+	 * 快速排序
+	 * 
+	 * 复杂度：NlgN
+	 * 主要思想：分治策略。
+	 * 选择一个基准值（pivot），第一趟循环让所有小于pivot的值放在左边，大于pivot的值放在右边，而pivot放在最终位置。
+	 * 接着递归左边和右边即可。
+	 * 
+	 * @param arr
+	 */
+	public static void quickSort(int[] arr) {
+		quickSort(arr, 0, arr.length - 1);
+	}
+
+	private static void quickSort(int[] arr, int low, int high) {
+		if (low >= high)
+			return;
+		int l = low, h = high; // 左右索引值
+		int pivot = arr[l]; // 基准值
+
+		while (l < h) {
+			while (l < h && arr[h] > pivot)
+				h--;
+			if (l < h)
+				arr[l++] = arr[h];
+
+			while (l < h && arr[l] < pivot)
+				l++;
+			if (l < h)
+				arr[h--] = arr[l];
+		}
+		arr[l] = pivot;
+
+		quickSort(arr, low, l - 1);
+		quickSort(arr, l + 1, high);
+	}
+	
 	public static void main(String[] args) {
 		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
 		ArrayUtil.print(arr);
