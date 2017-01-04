@@ -8,7 +8,7 @@ import java.util.Iterator;
  * @author fanzhoukai
  * 
  */
-public class Stack<E> implements Iterable<E>{
+public class Stack<E> implements Iterable<E> {
 
 	private Node<E> top; // 栈顶元素
 
@@ -68,7 +68,7 @@ public class Stack<E> implements Iterable<E>{
 		}
 		System.out.println(sb);
 	}
-	
+
 	/**
 	 * 获取迭代器
 	 */
@@ -76,13 +76,14 @@ public class Stack<E> implements Iterable<E>{
 	public Iterator<E> iterator() {
 		return new Itr();
 	}
-	
+
 	/**
 	 * 迭代器类
+	 * 
 	 * @author fanzhoukai
-	 *
+	 * 
 	 */
-	private class Itr implements Iterator<E>{
+	private class Itr implements Iterator<E> {
 
 		Node<E> current = top;
 
@@ -112,7 +113,7 @@ public class Stack<E> implements Iterable<E>{
 		}
 
 	}
-	
+
 	/**
 	 * 堆栈节点类
 	 * 
@@ -136,9 +137,8 @@ public class Stack<E> implements Iterable<E>{
 		stack.push("3");
 		stack.print();
 		Iterator<String> it = stack.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 			System.out.println(it.next());
 	}
 
-	
 }

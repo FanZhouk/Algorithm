@@ -13,7 +13,7 @@ public class SortUtil {
 	 * 复杂度：~N^2/2
 	 * 主要思想：循环数组，找出最小的，与第一个元素交换；找出第二小的，与第二个元素交换...
 	 * 
-	 * @param arr  待排序的数组
+	 * @param arr 待排序的数组
 	 */
 	public static void selectionSort(int[] arr) {
 		for (int i = 0; i < arr.length - 1; i++) {
@@ -224,7 +224,7 @@ public class SortUtil {
 		quickSort(arr, low, l - 1);
 		quickSort(arr, l + 1, high);
 	}
-	
+
 	public static void main(String[] args) {
 		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
 		ArrayUtil.print(arr);

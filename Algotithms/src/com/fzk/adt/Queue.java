@@ -10,7 +10,7 @@ import java.util.Iterator;
  * @author fanzhoukai
  * 
  */
-public class Queue<E> implements Iterable<E>{
+public class Queue<E> implements Iterable<E> {
 
 	private Node<E> front; // 首节点（指向实际存在的节点）
 	private Node<E> rear; // 尾节点（指向实际存在的节点）
@@ -81,13 +81,14 @@ public class Queue<E> implements Iterable<E>{
 	public Iterator<E> iterator() {
 		return new Itr();
 	}
-	
+
 	/**
 	 * 迭代器类
+	 * 
 	 * @author fanzhoukai
-	 *
+	 * 
 	 */
-	private class Itr implements Iterator<E>{
+	private class Itr implements Iterator<E> {
 
 		Node<E> current = front;
 
@@ -116,7 +117,7 @@ public class Queue<E> implements Iterable<E>{
 		public void remove() {
 		}
 	}
-	
+
 	/**
 	 * 队列节点类
 	 * 
@@ -140,7 +141,7 @@ public class Queue<E> implements Iterable<E>{
 		q.offer("c");
 		q.print();
 		Iterator<String> it = q.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 			System.out.println(it.next());
 	}
 }

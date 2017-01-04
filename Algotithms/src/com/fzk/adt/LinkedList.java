@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author fanzhoukai
  * 
  */
-public class LinkedList<E> implements List<E>{
+public class LinkedList<E> implements List<E> {
 
 	// 虚拟头结点
 	// header的value永远为空
@@ -117,7 +117,7 @@ public class LinkedList<E> implements List<E>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	// ***************************************** 修改相关方法 *****************************************
 	/**
 	 * 向链表末尾添加一个元素
@@ -151,7 +151,7 @@ public class LinkedList<E> implements List<E>{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 移除一个节点
 	 */
@@ -183,7 +183,7 @@ public class LinkedList<E> implements List<E>{
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		Iterator<?> it = c.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 			add((E) it.next());
 		return true;
 	}
@@ -223,7 +223,7 @@ public class LinkedList<E> implements List<E>{
 			e = next;
 		}
 		header.next = header.previous = header;
-        size = 0;
+		size = 0;
 	}
 
 	// **************************************** 指定位置存取方法 ****************************************
@@ -235,12 +235,8 @@ public class LinkedList<E> implements List<E>{
 		return node(index).value;
 	}
 
-	/**
-	 * 获取指定索引位置上的节点
-	 * @param index
-	 * @return
-	 */
-	private Node<E> node(int index){
+	// 获取指定索引位置上的节点
+	private Node<E> node(int index) {
 		if (index < 0 || index >= size)
 			throw new IndexOutOfBoundsException();
 		Node<E> node;
@@ -280,7 +276,7 @@ public class LinkedList<E> implements List<E>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	// **************************************** 搜索方法 ****************************************
 	/**
 	 * 获取第一次出现指定元素的索引
@@ -305,9 +301,9 @@ public class LinkedList<E> implements List<E>{
 				return index;
 		return -1;
 	}
-	
+
 	// **************************************** 逆序迭代器 ****************************************
-	
+
 	@Override
 	public ListIterator<E> listIterator() {
 		// TODO Auto-generated method stub
@@ -319,9 +315,9 @@ public class LinkedList<E> implements List<E>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	// **************************************** 视图方法 ****************************************
-	
+
 	/**
 	 * 获取一个子集（视图）
 	 * 

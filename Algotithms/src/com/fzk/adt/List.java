@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author fanzhoukai
  * 
  */
-public interface List<E> extends Collection<E>{
+public interface List<E> extends Collection<E> {
 	/**
 	 * 查询相关方法
 	 */

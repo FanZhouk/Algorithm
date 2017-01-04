@@ -15,6 +15,7 @@ public class ArrayUtil {
 	 * 
 	 * 来源：1.1.10节
 	 * 复杂度：lgN
+	 * 
 	 * @param arr 要查询的数组
 	 * @param target 要查找的目标数字
 	 * @return 找到的索引值，若没有返回-1
@@ -45,6 +46,7 @@ public class ArrayUtil {
 	 * 
 	 * 来源：1.4.5.1节
 	 * 复杂度：NlgN
+	 * 
 	 * @param arr 查询的数组
 	 * @param target 指定的和
 	 * @return 数组中两个数字和为target的组数
@@ -77,8 +79,10 @@ public class ArrayUtil {
 			if (result == target) {
 				count++;
 				// 确保前后游标不会重复
-				while (low < high && arr[low] == arr[low + 1]) low++;
-				while (low < high && arr[high] == arr[high - 1]) high--;
+				while (low < high && arr[low] == arr[low + 1])
+					low++;
+				while (low < high && arr[high] == arr[high - 1])
+					high--;
 				low++;
 				high--;
 			} else if (result < target) {
@@ -89,12 +93,13 @@ public class ArrayUtil {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * 3-Sum问题
 	 * 
 	 * 来源：练习1.4.15
 	 * 复杂度：N^2
+	 * 
 	 * @param arr 查询的数组
 	 * @param target 指定的和
 	 * @return 数组中三个数字和为target的组数
@@ -117,11 +122,14 @@ public class ArrayUtil {
 			while (low < high) {
 				int result = arr[i] + arr[low] + arr[high];
 				if (result == target) { // 找到了
-					System.out.println(arr[i] + "+" + arr[low] + "+" + arr[high]);
+					System.out.println(arr[i] + "+" + arr[low] + "+"
+							+ arr[high]);
 					count++;
 
-					while (low < high && arr[low] == arr[low + 1]) low++;	// 确保low游标不会重复
-					while (low < high && arr[high] == arr[high - 1]) high--;	// 确保high游标不会重复
+					while (low < high && arr[low] == arr[low + 1])
+						low++; // 确保low游标不会重复
+					while (low < high && arr[high] == arr[high - 1])
+						high--; // 确保high游标不会重复
 
 					low++;
 					high--;
@@ -162,8 +170,8 @@ public class ArrayUtil {
 	}
 
 	public static void main(String[] args) {
-		 int arr[] = { -4, 6, 5, 1, 2, 8, 0, 3, -10, 4, 10, -2 };
+		int arr[] = { -4, 6, 5, 1, 2, 8, 0, 3, -10, 4, 10, -2 };
 		//int arr[] = { 0, 2, 4, 6, 9, 11, 17, 30, 31, 50 };
-		System.out.println(threeSum(arr,0));
+		System.out.println(threeSum(arr, 0));
 	}
 }
