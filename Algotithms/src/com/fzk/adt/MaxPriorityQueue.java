@@ -1,134 +1,194 @@
 package com.fzk.adt;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
- * 最大优先队列（利用二叉堆实现）
+ * 最大优先队列
+ * 
+ * 允许重复元素
  * 
  * @author fanzhoukai
  * 
- * @param <K> 队列内存储的对象类型，须继承Comparable
  */
-public class MaxPriorityQueue<K extends Comparable<K>> {
+public class MaxPriorityQueue<E extends Comparable<E>> {
 
-	// 二叉堆，存储优先队列
-	// 不使用pq[0]，堆元素索引从1开始
-	private Object[] pq;
+	// 二叉堆，存储集合元素
+	// heap[0]不存储元素，从索引1开始
+	private Object[] heap;
 
-	private int INIT_CAPACITY = 1 << 4; // 初始长度为16
+	// 集合初始长度为0
+	private int size = 0;
 
-	private int size = 0; // 实际存储的元素数量
+	// 数组初始化容量为16
+	private static final int INITIAL_CAPACITY = 1 << 4;
 
 	/**
-	 * 创建一个空的最大优先队列
+	 * 创建一个默认长度的空队列
 	 */
 	public MaxPriorityQueue() {
-		pq = new Object[INIT_CAPACITY];
+		this(INITIAL_CAPACITY);
 	}
 
 	/**
-	 * 创建一个最大容量为max的最大优先队列
-	 */
-	public MaxPriorityQueue(int max) {
-		pq = new Object[max];
-	}
-
-	/**
-	 * 用数组a中的元素创建一个最大优先队列
-	 */
-	public MaxPriorityQueue(Comparable<K>[] a){
-		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * 向优先队列中插入一个元素
+	 * 创建一个指定初始长度的空队列
 	 * 
-	 * @param k 插入的元素
+	 * @param initCapacity 二叉堆的初始容量
 	 */
-	public void insert(K k) {
-		pq[++size] = k;
-		swim(size);
+	public MaxPriorityQueue(int initCapacity) {
+		heap = new Object[initCapacity + 1]; // 加1是因为索引为0的位置不存储
 	}
 
 	/**
-	 * 查看最大元素
-	 */
-	public K max() {
-		return size == 0 ? null : (K) pq[1];
-	}
-
-	/**
-	 * 删除并返回最大元素
-	 */
-	public K delMax() {
-		if(size == 0)
-			return null;
-		K max = (K)pq[1];
-		exch(1,size--);
-		sink(1);
-		return max;
-	}
-
-	/**
-	 * 判断队列是否为空
-	 * 
-	 * @return true if this queue is empty
-	 */
-	public boolean isEmpty() {
-		return size == 0;
-	}
-
-	/**
-	 * 返回队列中元素个数
+	 * 获取优先队列的长度
 	 */
 	public int size() {
 		return size;
 	}
 
 	/**
-	 * 打印出二叉堆
+	 * 判断是否为空
+	 */
+	public boolean isEmpty() {
+		return size == 0;
+	}
+
+	/**
+	 * 添加一个元素
+	 * 
+	 * @param ele 添加的元素
+	 */
+	public void add(E ele) {
+		if (ele == null)
+			throw new NullPointerException();
+		ensureCapacity(++size + 1);
+		heap[size] = ele; // 将新元素添加到数组的最后
+		swim(size); // 将刚添加的元素上浮
+	}
+
+	/**
+	 * 删除并返回集合中的最大元素
+	 */
+	@SuppressWarnings("unchecked")
+	public E deleteMax() {
+		if (isEmpty())
+			throw new NoSuchElementException("It's already empty!");
+		Object oldMax = heap[1];
+		heap[1] = heap[size--];
+		sink(1);
+		heap[size + 1] = null;
+		return (E) oldMax;
+	}
+
+	// 给数组扩容
+	// size是数组要保持的最小容量
+	private void ensureCapacity(int size) {
+		if (size <= heap.length)
+			return;
+
+		// 扩容后的容量：若<64，扩为2倍；否则扩为1.5倍
+		int newCapacity = heap.length;
+		do {
+			if (newCapacity < 64) newCapacity <<= 1;
+			else newCapacity = newCapacity / 2 * 3;
+		} while (newCapacity < size);
+
+		heap = Arrays.copyOf(heap, newCapacity);
+	}
+
+	// 将指定索引的元素上浮
+	private void swim(int k) {
+		Object tmp = heap[k];
+		int cursor = k;
+		while (cursor > 1 && less(heap[cursor / 2], tmp)) {
+			heap[cursor] = heap[cursor / 2];
+			cursor >>= 1;
+		}
+		heap[cursor] = tmp;
+	}
+
+	// 将指定索引的元素下沉
+	private void sink(int k) {
+		int cursor = k;
+		Object tmp = heap[cursor];
+		while (cursor * 2 <= size) { // 只要索引k还有左子节点，就一直循环
+			int next = cursor * 2; // 下一个要置换的元素，可能是左子节点也可能是右子节点，暂定为左子节点
+			if (next < size && less(heap[next], heap[next + 1])) // 若它左右子节点都存在，则比较一下，把next设为更大的节点索引
+				next++;
+			// 此时已经确定了左右子节点更大的一个（next），还需要比较一下这个节点和next的值谁更大，要是这个节点已经最大了，就不要再下沉了
+			if (less(heap[next], tmp))
+				break;
+			heap[cursor] = heap[next];
+			cursor = next;
+		}
+		heap[cursor] = tmp;
+	}
+
+	// 判断第一个元素是否小于第二个元素
+	// 注意，这里比较的是元素本身，而不是像书中一样的比较索引值指向的元素！
+	// 因为这里做了修改，节省了交换步骤（见练习2.4.26）
+	@SuppressWarnings("unchecked")
+	private boolean less(Object o1, Object o2) {
+		Comparable<E> c = (Comparable<E>) o1;
+		return c.compareTo((E) o2) < 0;
+	}
+	
+	/**
+	 * 顺序打印数组
 	 */
 	public void print() {
 		StringBuffer sb = new StringBuffer("[");
-		for (int i = 1; i <= size; i++) {	// 此处包括size，是因为数组索引为0的元素为空，实际存储的索引就是 1 ~ size
-			sb.append(pq[i]);
+		for (int i = 1; i <= size; i++) {
+			sb.append(heap[i]);
 			if (i != size)
 				sb.append(", ");
 		}
 		sb.append("]");
-		System.out.println(sb);
+		System.out.print(sb);
+	}
+
+	/**
+	 * 获取迭代器
+	 * 
+	 * 迭代器是按照从大到小的顺序，而不是直接按照数组的顺序
+	 */
+	public Iterator<E> iterator() {
+		return new Itr();
 	}
 	
-	// 将索引为k的元素上浮（由下至上的堆有序化）
-	private void swim(int k) {
-		while (k > 1 && less(k / 2, k)) {
-			exch(k, k / 2);
-			k /= 2;
+	/**
+	 * 迭代器类
+	 * 
+	 * @author fanzhoukai
+	 */
+	private class Itr implements Iterator<E>{
+
+		MaxPriorityQueue<E> copy;
+		
+		public Itr(){
+			copy = new MaxPriorityQueue<E>(size);
+			//copy.heap = heap;
+			copy.heap = new Object[size];
+			for (int i = 1; i <= size; i++)
+				//copy.heap[i] = heap[i]; 为啥这里直接复制数组不行捏？
+				copy.add((E) heap[i]);
+			copy.size = size;
 		}
-	}
-
-	// 将索引为k的元素下沉（由上至下的堆有序化）
-	private void sink(int k) {
-		while (k * 2 <= size) {
-			int ind = k * 2;
-			if (ind < size && less(ind, ind + 1))
-				ind++;
-			if (!less(k, ind))
-				break;
-			exch(k, ind);
-			k = ind;
+		
+		@Override
+		public boolean hasNext() {
+			return !copy.isEmpty();
 		}
-	}
 
-	// 若索引为i的元素小于索引为j的元素，返回true
-	@SuppressWarnings("unchecked")
-	private boolean less(int i, int j) {
-		Comparable<K> o1 = (Comparable<K>) pq[i];
-		return o1.compareTo((K) pq[j]) < 0;
-	}
+		@Override
+		public E next() {
+			return copy.deleteMax();
+		}
 
-	// 交换索引为i和j的元素
-	private void exch(int i, int j) {
-		Object tmp = pq[i];
-		pq[i] = pq[j];
-		pq[j] = tmp;
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("No no no, U can't do this!");
+		}
 	}
 }
