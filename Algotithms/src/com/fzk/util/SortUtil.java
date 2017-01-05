@@ -12,8 +12,6 @@ public class SortUtil {
 	 * 
 	 * 复杂度：~N^2/2
 	 * 主要思想：循环数组，找出最小的，与第一个元素交换；找出第二小的，与第二个元素交换...
-	 * 
-	 * @param arr 待排序的数组
 	 */
 	public static void selectionSort(int[] arr) {
 		for (int i = 0; i < arr.length - 1; i++) {
@@ -39,8 +37,6 @@ public class SortUtil {
 	 * 主要思想：把数组分为两个区域：左边为有序区，右边为无序区。
 	 * 循环数组，每次取无序区的第一个，插入到有序区中的相应位置上去，比它大的元素各后移一位。
 	 * 直到整个数组都变为有序区为止。
-	 * 
-	 * @param arr 要排序的数组
 	 */
 	public static void insertionSort(int[] arr) {
 		for (int i = 1; i < arr.length; i++) {
@@ -78,8 +74,6 @@ public class SortUtil {
 	 * 如原数组长度为10，设定步长为10/2=5，则对索引为(0,5),(1,6),(2,7),(3,8),(4,9)的元素进行插入排序；
 	 * 接着缩短步长为5/2=2，则对索引为(0,2,4,6,8),(1,3,5,7,9)的元素进行插入排序；
 	 * 直至步长缩短为1，对整个数组进行插入排序，则希尔排序完成。
-	 * 
-	 * @param arr 要排序的数组
 	 */
 	public static void shellSort(int[] arr) {
 		int gap = arr.length >> 1; // 步长
@@ -149,8 +143,6 @@ public class SortUtil {
 	 * 复杂度：~NlgN
 	 * 主要思想：递归，合并。
 	 * 若原数组长度为n，第一步归并排序 0 ~ n/2，第二步排序 n/2+1 ~ n-1，最后合并两个有序子数组。
-	 * 
-	 * @param arr
 	 */
 	public static void mergeSort(int[] arr) {
 		int[] tmp = new int[arr.length];
@@ -195,8 +187,6 @@ public class SortUtil {
 	 * 主要思想：分治策略。
 	 * 选择一个基准值（pivot），第一趟循环让所有小于pivot的值放在左边，大于pivot的值放在右边，而pivot放在最终位置。
 	 * 接着递归左边和右边即可。
-	 * 
-	 * @param arr
 	 */
 	public static void quickSort(int[] arr) {
 		quickSort(arr, 0, arr.length - 1);
@@ -205,24 +195,28 @@ public class SortUtil {
 	private static void quickSort(int[] arr, int low, int high) {
 		if (low >= high)
 			return;
-		int l = low, h = high; // 左右索引值
-		int pivot = arr[l]; // 基准值
+		int pivotIndex = partition(arr, low, high);
+		quickSort(arr, low, pivotIndex - 1);
+		quickSort(arr, pivotIndex + 1, high);
+	}
 
-		while (l < h) {
-			while (l < h && arr[h] > pivot)
-				h--;
-			if (l < h)
-				arr[l++] = arr[h];
-
-			while (l < h && arr[l] < pivot)
-				l++;
-			if (l < h)
-				arr[h--] = arr[l];
+	// 分割数组
+	// 使low位置的元素处在正确位置，且左边都比它小，右边都比它大
+	// 此处使用default权限，因为在com.fzk.util.ArrayUtil.findMedian(int[])中也有使用
+	static int partition(int[] arr, int low, int high) {
+		int pivotValue = arr[low];
+		while (low < high) {
+			while (low < high && arr[high] > pivotValue)
+				high--;
+			if (low < high)
+				arr[low++] = arr[high];
+			while (low < high && arr[low] < pivotValue)
+				low++;
+			if (low < high)
+				arr[high--] = arr[low];
 		}
-		arr[l] = pivot;
-
-		quickSort(arr, low, l - 1);
-		quickSort(arr, l + 1, high);
+		arr[low] = pivotValue;
+		return low;
 	}
 
 	public static void main(String[] args) {

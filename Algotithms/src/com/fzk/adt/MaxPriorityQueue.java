@@ -41,6 +41,18 @@ public class MaxPriorityQueue<E extends Comparable<E>> {
 	}
 
 	/**
+	 * 创建一个指定数组的二叉堆
+	 * 
+	 * @param array
+	 */
+	public MaxPriorityQueue(E[] array) {
+		size = array.length;
+		heap = new Object[size + 1];
+		for (E val : array)
+			add(val);
+	}
+	
+	/**
 	 * 获取优先队列的长度
 	 */
 	public int size() {
@@ -162,20 +174,20 @@ public class MaxPriorityQueue<E extends Comparable<E>> {
 	 * 
 	 * @author fanzhoukai
 	 */
-	private class Itr implements Iterator<E>{
+	private class Itr implements Iterator<E> {
 
 		MaxPriorityQueue<E> copy;
-		
-		public Itr(){
+
+		// 这里的迭代器并不是直接按顺序遍历数组，而是从大到小的顺序遍历，因此需要复制一个一模一样的二叉堆，每次弹出最大的
+		@SuppressWarnings("unchecked")
+		public Itr() {
 			copy = new MaxPriorityQueue<E>(size);
-			//copy.heap = heap;
 			copy.heap = new Object[size];
 			for (int i = 1; i <= size; i++)
-				//copy.heap[i] = heap[i]; 为啥这里直接复制数组不行捏？
-				copy.add((E) heap[i]);
+				copy.add((E) heap[i]); //copy.heap[i] = heap[i]; 为啥这里直接复制数组不行呢？
 			copy.size = size;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return !copy.isEmpty();

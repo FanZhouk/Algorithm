@@ -122,8 +122,7 @@ public class ArrayUtil {
 			while (low < high) {
 				int result = arr[i] + arr[low] + arr[high];
 				if (result == target) { // 找到了
-					System.out.println(arr[i] + "+" + arr[low] + "+"
-							+ arr[high]);
+					System.out.println(arr[i] + "+" + arr[low] + "+" + arr[high]);
 					count++;
 
 					while (low < high && arr[low] == arr[low + 1])
@@ -141,6 +140,31 @@ public class ArrayUtil {
 			}
 		}
 		return count;
+	}
+
+	/**
+	 * 获取一个数组的中位数
+	 * 
+	 * 复杂度：N
+	 */
+	// 思路：要得到一个数组的中位数，不需要对整个数组进行排序，只要一部分就好了。
+	// 求中位数实际上就是求第(N-1)/2大的数字。
+	// 利用快排的分隔法，把一个数字放在正确位置，若这个位置的索引大于中位数的位置，在左边找；若小于中位数的位置，在右边找。
+	// 直到找到中位数的位置为止。
+	public static int findMedian(int arr[]) {
+		int medianIndex = (arr.length - 1) >> 1; // 中位数的索引值
+		int low = 0;
+		int high = arr.length - 1;
+		while (high > low) {
+			int ind = SortUtil.partition(arr, low, high);
+			if (ind == medianIndex)
+				return arr[ind];
+			else if (ind > medianIndex)
+				high = ind - 1;
+			else
+				low = ind + 1;
+		}
+		return arr[medianIndex];
 	}
 
 	/**
