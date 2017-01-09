@@ -141,35 +141,143 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 		//TODO
 		return null;
 	}
-	
+
+	/**
+	 * 删除键最小的键值对，并返回值
+	 */
+	public V removeMin() {
+		if (root == null)
+			return null;
+
+		Node n = firstNode(); // 要删除的元素
+		V oldValue = n.value;
+
+		if (n == root) {
+			root = root.right;
+			if (root != null)
+				root.parent = null;
+		} else {
+			n.parent.left = n.right;
+			if (n.right != null)
+				n.right.parent = n.parent;
+		}
+		size--;
+		return oldValue;
+	}
+
+	/**
+	 * 删除键最大的键值对，并返回值
+	 */
+	public V removeMax() {
+		if (root == null)
+			return null;
+
+		Node n = lastNode();
+		V oldValue = n.value;
+
+		if (n == root) {
+			root = root.left;
+			if (root != null)
+				root.parent = null;
+		} else {
+			n.parent.right = n.left;
+			if (n.left != null) {
+				n.left.parent = n.parent;
+			}
+		}
+		size--;
+		return oldValue;
+	}
+
 	/**
 	 * 根据键删除一个键值对
 	 */
-	public V delete(K key) {
-		if (root == null)
+	public V remove(K key) {
+		Node p = getNode(key);
+		if (p == null)
 			return null;
-		Node n = getNode(key);
-		if (n == null)
-			return null;
-
-		V oldValue = n.value;
-		if (n.left != null) {
-			Node ex = predecessor(n); // 前趋不为空
-			if (ex == ex.parent.left)
-				ex.parent.left = null;
-			else
-				ex.parent.right = null;
-
-		} else if (n.right != null) {
-			Node ex = successor(n); // 后继不为空
-			//TODO
-		} else { // 是叶子节点
-			if (n == n.parent.left)
-				n.parent.left = null;
-			else
-				n.parent.right = null;
-		}
+		V oldValue = p.value;
+		removeNode(p);
 		return oldValue;
+	}
+
+	// 测试用方法，获取根节点的键值
+	public K getRoot() {
+		return root == null ? null : root.key;
+	}
+
+	// 删除一个节点
+	private void removeNode(Node p) {
+		size--;
+
+		// p是叶子节点
+		if (p.left == null && p.right == null) {
+			if (p == root) // p是根节点
+				root = null;
+			else if (p == p.parent.left) // p是左节点
+				p.parent.left = null;
+			else // p是右节点
+				p.parent.right = null;
+			p.parent = null;
+			return;
+		}
+
+		Node r = p.left != null ? p.left : p.right;
+		if (r != null) { // p有且仅有一个子节点
+			r.parent = p.parent;
+			if (p == root)
+				root = r;
+			else if (p == p.parent.left)
+				p.parent.left = r;
+			else
+				p.parent.right = r;
+			return;
+		}
+
+		// p有左右子节点
+		Node replacement = successor(p); // p的后继代替p
+		p.key = replacement.key;
+		p.value = replacement.value;
+		removeNode(replacement);
+	}
+
+	// 删除一个节点（仿照TreeMap中的方式写）
+	private void removeNode2(Node p) {
+		size--;
+
+		// 左右子节点全部存在
+		if (p.left != null && p.right != null) {
+			Node s = successor(p);
+			p.key = s.key;
+			p.value = s.value;
+			p = s;
+		}
+
+		// 尽量找一个存在的子节点
+		Node replacement = (p.left != null ? p.left : p.right);
+
+		if (replacement != null) { // 左或右子节点至少存在一个
+			replacement.parent = p.parent;
+			if (p.parent == null)
+				root = replacement;
+			else if (p == p.parent.left)
+				p.parent.left = replacement;
+			else
+				p.parent.right = replacement;
+
+			p.left = p.right = p.parent = null;
+
+		} else if (p.parent == null) { // 左右节点都没有，而且还是根节点
+			root = null;
+		} else { // 叶子节点
+			if (p.parent != null) {
+				if (p == p.parent.left)
+					p.parent.left = null;
+				else if (p == p.parent.right)
+					p.parent.right = null;
+				p.parent = null;
+			}
+		}
 	}
 
 	/**
@@ -180,24 +288,71 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 		root = null;
 	}
 
+	/**
+	 * 层次遍历，并直接输出
+	 */
+	public void levelThrough() {
+		if (root == null) {
+			System.out.println("null");
+			return;
+		}
+
+		StringBuffer sb = new StringBuffer("[");
+		Queue<Node> q = new Queue<Node>();
+		q.offer(root);
+		do {
+			Node tmp = q.poll(); // 访问元素，并出队列
+			if (tmp.left != null)
+				q.offer(tmp.left);
+			if (tmp.right != null)
+				q.offer(tmp.right);
+
+			sb.append(tmp.value);
+			if (!q.isEmpty())
+				sb.append(", ");
+		} while (!q.isEmpty());
+		System.out.println(sb.append("]"));
+	}
+
 	// 获取指定节点的后继节点
 	private Node successor(Node node) {
-		if (node == null || node.right == null)
+		if (node == null)
 			return null;
-		Node n = node.right;
-		while (n.left != null)
-			n = n.left;
-		return n;
+		if (node.right != null) {
+			Node n = node.right;
+			while (n.left != null)
+				n = n.left;
+			return n;
+		} else {
+			Node n = node;
+			while (n.parent != null) {
+				if (n == n.parent.left)
+					return n.parent;
+				else
+					n = n.parent;
+			}
+		}
+		return null;
 	}
 
 	// 获取指定节点的前趋节点
 	private Node predecessor(Node node) {
-		if (node == null || node.left == null)
+		if (node == null)
 			return null;
-		Node n = node.left;
-		while (n.right != null)
-			n = n.right;
-		return n;
+		if (node.left != null) { // 左子节点非空，找左子节点的最右边
+			Node n = node.left;
+			while (n.right != null)
+				n = n.right;
+			return n;
+		} else { // 左子节点为空，向上找
+			Node ch = node;
+			Node p = ch.parent;
+			while (p != null && ch == p.left) {
+				ch = p;
+				p = p.parent;
+			}
+			return p;
+		}
 	}
 
 	// 获取首个节点
