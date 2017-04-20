@@ -192,6 +192,11 @@ public class ArrayUtil {
 	public static void print(int[] arr) {
 		System.out.println(toString(arr));
 	}
+	
+	public static void print(int[][] arr) {
+		for (int[] inner : arr)
+			System.out.println(toString(inner));
+	}
 
 	public static void main(String[] args) {
 		int arr[] = { -4, 6, 5, 1, 2, 8, 0, 3, -10, 4, 10, -2 };
