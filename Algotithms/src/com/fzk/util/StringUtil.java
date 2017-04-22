@@ -1,5 +1,6 @@
 package com.fzk.util;
 
+import com.fzk.adt.LinkedStack;
 import com.fzk.adt.Stack;
 
 /**
@@ -21,8 +22,8 @@ public class StringUtil {
 		if (str == null || str.length() == 0)
 			throw new IllegalStateException();
 
-		Stack<Double> vals = new Stack<Double>(); // 数字栈
-		Stack<Character> opts = new Stack<Character>(); // 操作符栈
+		Stack<Double> vals = new LinkedStack<Double>(); // 数字栈
+		Stack<Character> opts = new LinkedStack<Character>(); // 操作符栈
 		double result = 0;
 		for (int count = 0; count < str.length(); count++) {
 			char val = str.charAt(count);

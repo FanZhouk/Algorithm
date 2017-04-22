@@ -298,7 +298,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 		}
 
 		StringBuffer sb = new StringBuffer("[");
-		Queue<Node> q = new Queue<Node>();
+		Queue<Node> q = new LinkedQueue<Node>();
 		q.offer(root);
 		do {
 			Node tmp = q.poll(); // 访问元素，并出队列

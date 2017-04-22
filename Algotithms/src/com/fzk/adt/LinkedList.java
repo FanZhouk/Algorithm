@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author fanzhoukai
  * 
  */
-public class LinkedList<E> implements List<E> {
+public class LinkedList<E> implements List<E>, Iterable<E> {
 
 	// 虚拟头结点
 	// header的value永远为空
