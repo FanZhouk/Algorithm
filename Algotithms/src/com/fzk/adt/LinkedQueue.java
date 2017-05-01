@@ -3,24 +3,30 @@ package com.fzk.adt;
 import java.util.Iterator;
 
 /**
- * 单链表数据结构，包含栈、队列的全部功能
+ * 队列结构，使用单链表实现
  * 
  * @author fanzhoukai
  * 
  */
 public class LinkedQueue<E> implements Queue<E>, Iterable<E> {
 
-	private Node top; // 链表首元素
+	private Node first; // 队列首元素
 
-	private Node bottom; // 链表尾元素
+	private Node last; // 队列尾元素
 
 	private int size; // 数据长度
 
+	/**
+	 * 查看队列大小
+	 */
 	@Override
 	public int size() {
 		return size;
 	}
 
+	/**
+	 * 判断是否为空
+	 */
 	@Override
 	public boolean isEmpty() {
 		return size == 0;
@@ -31,7 +37,7 @@ public class LinkedQueue<E> implements Queue<E>, Iterable<E> {
 	 */
 	@Override
 	public E peek() {
-		return top.element;
+		return first.element;
 	}
 
 	/**
@@ -40,10 +46,10 @@ public class LinkedQueue<E> implements Queue<E>, Iterable<E> {
 	@Override
 	public void offer(E element) {
 		if (isEmpty()) {
-			top = bottom = new Node(element, null);
+			first = last = new Node(element, null);
 		} else {
-			bottom.next = new Node(element, null);
-			bottom = bottom.next;
+			last.next = new Node(element, null);
+			last = last.next;
 		}
 		size++;
 	}
@@ -53,21 +59,46 @@ public class LinkedQueue<E> implements Queue<E>, Iterable<E> {
 	 */
 	@Override
 	public E poll() {
-		E val = top.element;
-		top = top.next;
+		E val = first.element;
+		first = first.next;
 		if (--size == 0)
-			bottom = null;
+			last = null;
 		return val;
 	}
 
+	/**
+	 * 队列翻转（单链表翻转）
+	 */
+	public void reverse() {
+		if (size() <= 1)
+			return;
+		while (first != last) {
+			Node tmp = first.next;
+			first.next = last.next;
+			last.next = first;
+			first = tmp;
+		}
+
+		// 交换first与last
+		Node tmp = first;
+		first = last;
+		last = tmp;
+	}
+
+	/**
+	 * 获取迭代器
+	 */
 	@Override
 	public Iterator<E> iterator() {
 		return new Itr();
 	}
 
+	/**
+	 * 迭代器类
+	 */
 	private class Itr implements Iterator<E> {
 
-		Node curr = top;
+		Node curr = first;
 
 		@Override
 		public boolean hasNext() {

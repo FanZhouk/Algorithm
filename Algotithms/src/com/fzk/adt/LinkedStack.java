@@ -10,15 +10,21 @@ import java.util.Iterator;
  */
 public class LinkedStack<E> implements Stack<E>, Iterable<E> {
 
-	private Node top; // 链表首元素
+	private Node top; // 栈顶元素
 
 	private int size; // 数据长度
 
+	/**
+	 * 获取数据长度
+	 */
 	@Override
 	public int size() {
 		return size;
 	}
 
+	/**
+	 * 判断是否为空
+	 */
 	@Override
 	public boolean isEmpty() {
 		return size == 0;
@@ -52,11 +58,34 @@ public class LinkedStack<E> implements Stack<E>, Iterable<E> {
 		return top.element;
 	}
 
+	/**
+	 * 栈元素翻转（单链表翻转）
+	 */
+	public void reverse() {
+		if (size() <= 1)
+			return;
+		Node bottom = top;
+		while (bottom.next != null)
+			bottom = bottom.next;
+		while (top != bottom) {
+			Node tmp = top.next;
+			top.next = bottom.next;
+			bottom.next = top;
+			top = tmp;
+		}
+	}
+
+	/**
+	 * 获取迭代器
+	 */
 	@Override
 	public Iterator<E> iterator() {
 		return new Itr();
 	}
 
+	/**
+	 * 迭代器类
+	 */
 	private class Itr implements Iterator<E> {
 
 		Node curr = top;
