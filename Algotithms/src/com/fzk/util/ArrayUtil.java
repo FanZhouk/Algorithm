@@ -122,7 +122,6 @@ public class ArrayUtil {
 			while (low < high) {
 				int result = arr[i] + arr[low] + arr[high];
 				if (result == target) { // 找到了
-					System.out.println(arr[i] + "+" + arr[low] + "+" + arr[high]);
 					count++;
 
 					while (low < high && arr[low] == arr[low + 1])
