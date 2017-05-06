@@ -8,7 +8,7 @@ package com.fzk.adt.unionFind;
  */
 public class QuickUnionUF implements UnionFind {
 
-	public int[] id; // 分量ID
+	private int[] id; // 分量ID
 	private int count; // 分量数量
 
 	/**
