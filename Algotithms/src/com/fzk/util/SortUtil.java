@@ -68,53 +68,24 @@ public class SortUtil {
 	}
 
 	/**
-	 * 希尔排序（较直观的写法）
+	 * 希尔排序
 	 * 
 	 * 主要思想：分组，组内多次插入排序。
-	 * 如原数组长度为10，设定步长为10/2=5，则对索引为(0,5),(1,6),(2,7),(3,8),(4,9)的元素进行插入排序；
-	 * 接着缩短步长为5/2=2，则对索引为(0,2,4,6,8),(1,3,5,7,9)的元素进行插入排序；
-	 * 直至步长缩短为1，对整个数组进行插入排序，则希尔排序完成。
 	 */
 	public static void shellSort(int[] arr) {
-		int gap = arr.length >> 1; // 步长
-		for (; gap > 0; gap >>= 1) { // 缩短步长
-			for (int count = 0; count < gap; count++) { // 分组，count为距离第一组的长度
-				for (int i = gap + count; i < arr.length; i += gap) { // 组内插入排序
-					if (arr[i] < arr[i - gap]) {
-						int ind = i - gap;
-						int val = arr[i];
-						while (ind >= 0 && arr[ind] > val) {
-							arr[ind + gap] = arr[ind];
-							ind -= gap;
-						}
-						arr[ind + gap] = val;
-					}
+		int N = arr.length;
+		int h = 1;
+		while (h < N / 3)
+			h = 3 * h + 1; // 1, 4, 13, 40, 121, 364, 1093...
+		while (h >= 1) {
+			for (int i = h; i < N; i++) {
+				for (int j = i; j >= h && arr[j] < arr[j - h]; j -= h) {
+					int tmp = arr[j];
+					arr[j] = arr[j - h];
+					arr[j - h] = tmp;
 				}
 			}
-		}
-	}
-
-	// 希尔排序（优化步长策略）
-	// 初始步长变为3的倍数+1，缩短步长策略变为缩短为原来的1/3。
-	// 实验证明这种步长策略的效率要比第一种好。
-	public static void shellSort2(int[] arr) {
-		int gap = 1; // 步长
-		while (gap < arr.length / 3) // 设定初始步长(1,4,13,40,121,364,1093...)
-			gap = 3 * gap + 1;
-		for (; gap > 0; gap /= 3) { // 缩短步长，策略为缩短为原来的1/3
-			for (int count = 0; count < gap; count++) { // 分组，count为距离第一组的长度
-				for (int i = gap + count; i < arr.length; i += gap) { // 组内插入排序
-					if (arr[i] < arr[i - gap]) {
-						int ind = i - gap;
-						int val = arr[i];
-						while (ind >= 0 && arr[ind] > val) {
-							arr[ind + gap] = arr[ind];
-							ind -= gap;
-						}
-						arr[ind + gap] = val;
-					}
-				}
-			}
+			h = h / 3;
 		}
 	}
 
@@ -158,18 +129,21 @@ public class SortUtil {
 		merge(arr, low, mid, high, tmp); // 合并
 	}
 
-	// 融合一个数组的两个有序子数组（low ~ mid 和 mid+1 ~ high 分别为两个有序子数组）
-	// tmp为临时数组，不传递任何信息，只是为了防止重复创建，造成空间浪费
+	/**
+	 * 融合一个数组的两个有序子数组（low ~ mid 和 mid+1 ~ high 分别为两个有序子数组）
+	 * 
+	 * @param arr 原数组
+	 * @param low 起始位置
+	 * @param mid 第一段待归并数组结束位置
+	 * @param high 终止位置
+	 * @param tmp 临时数组，不传递任何信息，只是为了防止重复创建，造成空间浪费
+	 */
 	public static void merge(int[] arr, int low, int mid, int high, int[] tmp) {
 		int l = low, m = mid + 1; // 对两个子数组的索引
 		int ind = low; // 对临时数组的索引
 
-		for (; l <= mid && m <= high; ind++) {
-			if (arr[l] < arr[m])
-				tmp[ind] = arr[l++];
-			else
-				tmp[ind] = arr[m++];
-		}
+		while (l <= mid && m <= high)
+			tmp[ind++] = arr[l] > arr[m] ? arr[m++] : arr[l++];
 		while (l <= mid)
 			tmp[ind++] = arr[l++];
 		while (m <= high)
@@ -178,6 +152,19 @@ public class SortUtil {
 		// 此时临时数组中已经是融合好的元素，把它们放回原数组即可
 		for (int i = low; i <= high; i++)
 			arr[i] = tmp[i];
+	}
+
+	/**
+	 * 归并排序（自底向上）
+	 * 第一轮将数组两两归并，即保证arr[0]<arr[1],arr[2]<arr[3]...
+	 * 第二轮将数组四四归并，即保证数组索引为0~3,4~7,8~11分别为有序。直至整个数组变为有序。
+	 */
+	public static void mergeSort2(int[] arr) {
+		int len = arr.length;
+		int[] tmp = new int[len];
+		for (int h = 1; h < len; h <<= 1) // 首次归并大小
+			for (int low = 0; low < len - h; low += h + h)
+				merge(arr, low, low + h - 1, Math.min(low + h + h - 1, len - 1), tmp);
 	}
 
 	/**
