@@ -168,6 +168,58 @@ public class SortUtil {
 	}
 
 	/**
+	 * 三路归并排序
+	 */
+	public static void mergeSort3(int[] arr) {
+		int[] tmp = new int[arr.length];
+		mergeSort3(arr, 0, arr.length - 1, tmp);
+	}
+
+	private static void mergeSort3(int[] arr, int low, int high, int[] tmp) {
+		if (low >= high)
+			return;
+		int gap = (high - low) / 3;
+		int mid1 = low + gap;
+		int mid2 = high - gap;
+		mergeSort3(arr, low, mid1, tmp);
+		mergeSort3(arr, mid1 + 1, mid2, tmp);
+		mergeSort3(arr, mid2 + 1, high, tmp);
+		merge3(arr, low, mid1, mid2, high, tmp);
+	}
+
+	
+	// 三路归并：low~mid1, mid1+1~mid2, mid2+1~high
+	private static void merge3(int[] arr, int low, int mid1, int mid2, int high, int[] tmp) {
+		int cursor = low;
+		int ind1 = low;
+		int ind2 = mid1 + 1;
+		int ind3 = mid2 + 1;
+		while (ind1 <= mid1 && ind2 <= mid2 && ind3 <= high) {
+			if (arr[ind1] <= arr[ind2] && arr[ind1] <= arr[ind3])
+				tmp[cursor] = arr[ind1++];
+			else if (arr[ind2] <= arr[ind1] && arr[ind2] <= arr[ind3])
+				tmp[cursor] = arr[ind2++];
+			else
+				tmp[cursor] = arr[ind3++];
+			cursor++;
+		}
+		while (ind1 <= mid1 && ind2 <= mid2)
+			tmp[cursor++] = arr[ind1] < arr[ind2] ? arr[ind1++] : arr[ind2++];
+		while (ind2 <= mid2 && ind3 <= high)
+			tmp[cursor++] = arr[ind2] < arr[ind3] ? arr[ind2++] : arr[ind3++];
+		while (ind1 <= mid1 && ind3 <= high)
+			tmp[cursor++] = arr[ind1] < arr[ind3] ? arr[ind1++] : arr[ind3++];
+		while (ind1 <= mid1)
+			tmp[cursor++] = arr[ind1++];
+		while (ind2 <= mid2)
+			tmp[cursor++] = arr[ind2++];
+		while (ind3 <= high)
+			tmp[cursor++] = arr[ind3++];
+		for (int i = low; i <= high; i++)
+			arr[i] = tmp[i];
+	}
+	
+	/**
 	 * 快速排序
 	 * 
 	 * 复杂度：NlgN
