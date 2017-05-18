@@ -258,6 +258,46 @@ public class SortUtil {
 		return low;
 	}
 
+	/**
+	 * 三向切分的快速排序
+	 * 
+	 * 把数组分为三份，分别为大于pivot、等于pivot和小于pivot的三部分。适用于存在大量重复主键的排序。
+	 */
+	public static void quickSort3way(int[] arr) {
+		quickSort3way(arr, 0, arr.length - 1);
+	}
+
+	// 分割数组
+	// 维护三个指针，l为从左向右，h为从右向左，i在l和h中间，左边都是等于pivot，右边都是未知部分。
+	// 运行过程中满足：
+	// [low ~ l-1]	:	小于pivot的部分
+	// [l ~ i-1]	:	等于pivot的部分
+	// [i ~ h]		:	未扫描过的部分
+	// [h+1 ~ high]	:	大于pivot的部分
+	private static void quickSort3way(int[] arr, int low, int high) {
+		if (low >= high)
+			return;
+		int pivot = arr[low];
+		int l = low, h = high, i = low + 1;
+		while (i <= h) {
+			if (arr[i] > pivot)
+				exchange(arr, i, h--);
+			else if (arr[i] < pivot)
+				exchange(arr, i++, l++);
+			else
+				i++;
+		}
+		quickSort3way(arr, low, l - 1);
+		quickSort3way(arr, h + 1, high);
+	}
+
+	// 交换数组中的两个数字
+	private static void exchange(int[] arr, int i1, int i2) {
+		int tmp = arr[i1];
+		arr[i1] = arr[i2];
+		arr[i2] = tmp;
+	}
+
 	public static void main(String[] args) {
 		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
 		ArrayUtil.print(arr);
