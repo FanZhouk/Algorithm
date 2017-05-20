@@ -46,7 +46,6 @@ public class MaxPriorityQueue<E extends Comparable<E>> {
 	 * @param array
 	 */
 	public MaxPriorityQueue(E[] array) {
-		size = array.length;
 		heap = new Object[size + 1];
 		for (E val : array)
 			add(val);
