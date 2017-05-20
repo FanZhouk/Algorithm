@@ -8,7 +8,7 @@ import java.util.Iterator;
  * @author fanzhoukai
  * 
  */
-public class LinkedQueue<E> implements Queue<E>, Iterable<E> {
+public class LinkedQueue<E> implements Queue<E> {
 
 	private Node first; // 队列首元素
 

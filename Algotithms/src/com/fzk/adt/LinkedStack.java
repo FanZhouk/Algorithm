@@ -40,7 +40,7 @@ public class LinkedStack<E> implements Stack<E>, Iterable<E> {
 	}
 
 	/**
-	 * 出栈操作，取出top元素
+	 * 出栈操作，取出栈顶元素
 	 */
 	@Override
 	public E pop() {
