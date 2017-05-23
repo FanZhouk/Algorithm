@@ -3,6 +3,18 @@ package com.fzk.util;
 /**
  * 排序工具类
  * 
+ * 1. 选择排序
+ * 2. 插入排序
+ * 3. 希尔排序
+ * 4. 归并排序
+ *  (1) 自顶向下的归并
+ *  (2) 自底向上的归并
+ *  (3) 三路归并
+ * 5. 快速排序
+ *  (1) 普通快速排序
+ *  (2) 三向切分的快速排序
+ * 6. 堆排序
+ * 
  * @author fanzhoukai
  * 
  */
@@ -187,7 +199,6 @@ public class SortUtil {
 		merge3(arr, low, mid1, mid2, high, tmp);
 	}
 
-	
 	// 三路归并：low~mid1, mid1+1~mid2, mid2+1~high
 	private static void merge3(int[] arr, int low, int mid1, int mid2, int high, int[] tmp) {
 		int cursor = low;
@@ -291,21 +302,56 @@ public class SortUtil {
 		quickSort3way(arr, h + 1, high);
 	}
 
+	/**
+	 * 堆排序
+	 * 
+	 * 主要思想：首先构建一个最大堆，接着依次取出最大元素放在最后，并将剩余元素构建为新的最大堆
+	 */
+	public static void heapSort(int[] arr) {
+		int len = arr.length;
+		for (int i = parent(len - 1); i >= 0; i--)
+			sink(arr, i, len - 1);
+		for (int i = len - 1; i > 0;) {
+			exchange(arr, 0, i--);
+			sink(arr, 0, i);
+		}
+	}
+
+	// 将index位置的元素下沉
+	// 此处arr从0位置开始存储
+	private static void sink(int[] arr, int index, int size) {
+		int value = arr[index];
+		while (left(index) <= size) {
+			int lt = left(index);
+			if (lt < size && arr[right(index)] > arr[lt])
+				lt++;
+			if (value > arr[lt])
+				break;
+			arr[index] = arr[lt];
+			index = lt;
+		}
+		arr[index] =value;
+	}
+
+	// 获取节点的父节点索引，数组从0索引开始存储
+	private static int parent(int index) {
+		return (index - 1) >> 1;
+	}
+
+	// 获取节点的左子节点索引，数组从0索引开始存储
+	private static int left(int index) {
+		return (index << 1) + 1;
+	}
+
+	// 获取节点的右子节点索引，数组从0索引开始存储
+	private static int right(int index) {
+		return (index << 1) + 2;
+	}
+
 	// 交换数组中的两个数字
 	private static void exchange(int[] arr, int i1, int i2) {
 		int tmp = arr[i1];
 		arr[i1] = arr[i2];
 		arr[i2] = tmp;
-	}
-
-	public static void main(String[] args) {
-		int[] arr = { 9, 3, 2, 4, 0, 8, 1, 5, 7, 6 };
-		ArrayUtil.print(arr);
-		// SortUtil.selectionSort(arr);
-		// SortUtil.insertionSort(arr);
-		// SortUtil.shellSort(arr);
-		// SortUtil.mergeSort(arr);
-		SortUtil.quickSort(arr);
-		ArrayUtil.print(arr);
 	}
 }
