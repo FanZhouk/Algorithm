@@ -2,6 +2,7 @@ package com.fzk.adt;
 
 /**
  * 二叉查找树数据结构（类似于java.util.TreeMap<K, V>）
+ * 节点中存储左右子节点即父节点
  * 
  * @author fanzhoukai
  * 
@@ -124,22 +125,6 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 		if (root == null)
 			return null;
 		return lastNode().key;
-	}
-
-	/**
-	 * 键向上取整
-	 */
-	public K ceilingKey(K key) {
-		// TODO
-		return null;
-	}
-
-	/**
-	 * 键向下取整
-	 */
-	public K floorKey(K key) {
-		//TODO
-		return null;
 	}
 
 	/**
