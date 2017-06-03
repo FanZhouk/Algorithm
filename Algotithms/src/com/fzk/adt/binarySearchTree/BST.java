@@ -1,13 +1,16 @@
-package com.fzk.adt;
+package com.fzk.adt.binarySearchTree;
+
+import com.fzk.adt.LinkedQueue;
+import com.fzk.adt.Queue;
 
 /**
- * 二叉查找树数据结构（类似于java.util.TreeMap<K, V>）
+ * 二叉查找树数据结构
  * 节点中存储左右子节点即父节点
  * 
  * @author fanzhoukai
  * 
  */
-public class BinarySearchTree<K extends Comparable<K>, V> {
+public class BST<K extends Comparable<K>, V> {
 
 	private Node root; // 根节点
 
@@ -16,7 +19,7 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 	/**
 	 * 创建一个新的二叉查找树
 	 */
-	public BinarySearchTree() {
+	public BST() {
 	}
 
 	/**
@@ -381,5 +384,4 @@ public class BinarySearchTree<K extends Comparable<K>, V> {
 			this.parent = parent;
 		}
 	}
-
 }

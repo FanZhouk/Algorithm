@@ -1,4 +1,7 @@
-package com.fzk.adt;
+package com.fzk.adt.binarySearchTree;
+
+import com.fzk.adt.LinkedQueue;
+import com.fzk.adt.Queue;
 
 /**
  * 二叉查找树数据结构
@@ -7,15 +10,15 @@ package com.fzk.adt;
  * @author fanzhoukai
  *
  */
-public class BinarySearchTree2<K extends Comparable<K>, V> {
+public class BST2<K extends Comparable<K>, V> {
 	private Node root; // 根节点
 
 	/**
 	 * 构造一个空的二叉查找树
 	 */
-	public BinarySearchTree2(){
-	} 
-	
+	public BST2() {
+	}
+
 	/**
 	 * 获取树中元素个数
 	 * 
@@ -28,6 +31,13 @@ public class BinarySearchTree2<K extends Comparable<K>, V> {
 	// 获取指定节点下的元素个数，包括节点自身
 	private int size(Node node) {
 		return node == null ? 0 : node.N;
+	}
+
+	/**
+	 * 判断树是否为空
+	 */
+	public boolean isEmpty() {
+		return size(root) == 0;
 	}
 
 	/**
@@ -78,10 +88,7 @@ public class BinarySearchTree2<K extends Comparable<K>, V> {
 			int comp = key.compareTo(node.key);
 			if (comp == 0)
 				return node.value;
-			if (comp < 0)
-				node = node.left;
-			else
-				node = node.right;
+			node = comp < 0 ? node.left : node.right;
 		}
 		return null;
 	}
