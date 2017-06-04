@@ -68,7 +68,7 @@ public class HashMap<K, V> {
 
 	// 计算键的哈希值映射在数组中的位置
 	private int index(Object key) {
-		return key == null ? 0 : key.hashCode() % table.length;
+		return key == null ? 0 : (key.hashCode() & 0x7fffffff) % table.length;
 	}
 
 	// 增加/修改键值对
