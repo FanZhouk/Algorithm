@@ -1,11 +1,15 @@
 package com.fzk.adt.binarySearchTree;
 
+import com.fzk.adt.LinkedList;
 import com.fzk.adt.LinkedQueue;
+import com.fzk.adt.LinkedStack;
+import com.fzk.adt.List;
 import com.fzk.adt.Queue;
+import com.fzk.adt.Stack;
 
 /**
  * 二叉查找树数据结构
- * 节点中存储左右子节点即父节点
+ * 节点中存储左右子节点与父节点
  * 
  * @author fanzhoukai
  * 
@@ -277,29 +281,100 @@ public class BST<K extends Comparable<K>, V> {
 	}
 
 	/**
-	 * 层次遍历，并直接输出
+	 * 输出广度优先遍历（层次遍历）结果——仅输出键
 	 */
-	public void levelThrough() {
-		if (root == null) {
-			System.out.println("null");
+	public void printBFS() {
+		if (isEmpty()) {
+			System.out.println("[]");
 			return;
 		}
+		Queue<Node> queue = new LinkedQueue<Node>();
+		queue.offer(root);
+		StringBuilder sb = new StringBuilder("[");
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+			if (node.left != null)
+				queue.offer(node.left);
+			if (node.right != null)
+				queue.offer(node.right);
 
-		StringBuffer sb = new StringBuffer("[");
-		Queue<Node> q = new LinkedQueue<Node>();
-		q.offer(root);
-		do {
-			Node tmp = q.poll(); // 访问元素，并出队列
-			if (tmp.left != null)
-				q.offer(tmp.left);
-			if (tmp.right != null)
-				q.offer(tmp.right);
-
-			sb.append(tmp.value);
-			if (!q.isEmpty())
+			sb.append(node.key);
+			if(!queue.isEmpty())
 				sb.append(", ");
-		} while (!q.isEmpty());
+		}
 		System.out.println(sb.append("]"));
+	}
+
+	/**
+	 * 广度优先搜索（仅对键的遍历）
+	 * 
+	 * @return 所有键的可迭代对象
+	 */
+	public Iterable<K> bfs() {
+		if (isEmpty())
+			return new LinkedList<K>();
+		List<Node> list = new LinkedList<Node>();
+		list.add(root);
+		int cursor = 0;
+		while (cursor < list.size()) {
+			Node parent = list.get(cursor);
+			if (parent.left != null)
+				list.add(parent.left);
+			if (parent.right != null)
+				list.add(parent.right);
+			cursor++;
+		}
+		List<K> result = new LinkedList<K>();
+		for (Node node : list)
+			result.add(node.key);
+		return result;
+	}
+
+	/**
+	 * 输出深度优先遍历（前序遍历）结果——仅输出键
+	 */
+	public void printDFS() {
+		if (isEmpty()) {
+			System.out.println("[]");
+			return;
+		}
+		Stack<Node> queue = new LinkedStack<Node>();
+		queue.push(root);
+		StringBuilder sb = new StringBuilder("[");
+		while (!queue.isEmpty()) {
+			Node node = queue.pop();
+			if (node.right != null)
+				queue.push(node.right);
+			if (node.left != null)
+				queue.push(node.left);
+
+			sb.append(node.key);
+			if(!queue.isEmpty())
+				sb.append(", ");
+		}
+		System.out.println(sb.append("]"));
+	}
+
+	/**
+	 * 深度优先搜索（仅对键的遍历）
+	 * 
+	 * @return 所有键的可迭代对象
+	 */
+	public Iterable<K> dfs() {
+		if (isEmpty())
+			return new LinkedList<K>();
+		List<K> result = new LinkedList<K>();
+		Stack<Node> stack = new LinkedStack<Node>();
+		stack.push(root);
+		while (!stack.isEmpty()) {
+			Node node = stack.pop();
+			result.add(node.key);
+			if (node.right != null)
+				stack.push(node.right);
+			if (node.left != null)
+				stack.push(node.left);
+		}
+		return result;
 	}
 
 	// 获取指定节点的后继节点
@@ -362,7 +437,7 @@ public class BST<K extends Comparable<K>, V> {
 	}
 
 	// 判断两个值是否相等（仅用于value的比较）
-	public boolean equals(Object o1, Object o2) {
+	private boolean equals(Object o1, Object o2) {
 		return o1 == null ? o2 == null : o1.equals(o2);
 	}
 
