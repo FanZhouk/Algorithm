@@ -374,6 +374,20 @@ public class LinkedList<E> implements List<E>, Stack<E>, Iterable<E> {
 	}
 
 	/**
+	 * 序列化
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("[");
+		for (Node<E> n = header.next; n != header; n = n.next) {
+			sb.append(n.value);
+			if (n.next != header)
+				sb.append(", ");
+		}
+		return sb.append("]").toString();
+	}
+
+	/**
 	 * 双向循环链表节点
 	 * 
 	 * @author fanzhoukai
