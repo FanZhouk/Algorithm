@@ -10,7 +10,7 @@ import java.util.ListIterator;
  * @author fanzhoukai
  * 
  */
-public class LinkedList<E> implements List<E>, Iterable<E> {
+public class LinkedList<E> implements List<E>, Stack<E>, Iterable<E> {
 
 	// 虚拟头结点
 	// header的value永远为空
@@ -265,16 +265,54 @@ public class LinkedList<E> implements List<E>, Iterable<E> {
 		return oldValue;
 	}
 
+	/**
+	 * 在指定索引位置添加
+	 */
 	@Override
 	public void add(int index, E element) {
-		// TODO Auto-generated method stub
-
+		Node<E> node = node(index);
+		Node<E> newNode = new Node<E>(element, node.previous, node);
+		node.previous.next = newNode;
+		node.next.previous = newNode;
 	}
 
+	/**
+	 * 移除指定索引的元素
+	 */
 	@Override
 	public E remove(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		Node<E> node = node(index);
+		E oldValue = node.value;
+		node.previous.next = node.next;
+		node.next.previous = node.previous;
+
+		node.previous = node.next = null;
+		node.value = null;
+		return oldValue;
+	}
+
+	/**
+	 * 栈操作，入栈
+	 */
+	@Override
+	public void push(E element) {
+		add(0, element);
+	}
+
+	/**
+	 * 栈操作，出栈
+	 */
+	@Override
+	public E pop() {
+		return remove(0);
+	}
+
+	/**
+	 * 栈操作，查看栈顶元素
+	 */
+	@Override
+	public E peek() {
+		return node(0).value;
 	}
 
 	// **************************************** 搜索方法 ****************************************
