@@ -3,39 +3,37 @@ package com.fzk.adt.graph;
 import java.util.HashSet;
 
 import com.fzk.adt.LinkedList;
+import com.fzk.adt.LinkedQueue;
 import com.fzk.adt.LinkedStack;
 import com.fzk.adt.List;
+import com.fzk.adt.Queue;
 import com.fzk.adt.Stack;
 
 /**
- * 无向图数据结构
- * 不支持新增、删除顶点，不支持平行边
+ * 邻接表实现的无向图数据结构
+ * 不支持增删顶点，不支持平行边
  * 
  * @author fanzhoukai
  *
  */
 public class UndirectedGraph implements Graph {
 
-	// 使用邻接表数组存储无向图信息
+	// 邻接表，存储无向图信息
 	private HashSet<Integer>[] adj;
 
-	// 顶点数量
-	private final int vertexNum;
-
-	// 边的数量
+	// 边数量
 	private int edgeNum;
 
 	/**
-	 * 构建一个指定顶点数量的无向图
+	 * 构建一个顶点数为edgeNum的图结构
 	 * 
-	 * @param vertexNum 顶点数量
+	 * @param vertexNum 顶点数
 	 */
 	@SuppressWarnings("unchecked")
 	public UndirectedGraph(int vertexNum) {
 		if (vertexNum < 0)
 			throw new IndexOutOfBoundsException(String.valueOf(vertexNum));
-		this.vertexNum = vertexNum;
-		adj = (HashSet<Integer>[]) new HashSet[vertexNum]; // 暂不初始化，在connect方法中才进行初始化
+		adj = (HashSet<Integer>[]) new HashSet[vertexNum]; // 延迟初始化，在connect方法中创建HashMap
 	}
 
 	/**
@@ -45,7 +43,7 @@ public class UndirectedGraph implements Graph {
 	 */
 	@Override
 	public int vertexNum() {
-		return vertexNum;
+		return adj.length;
 	}
 
 	/**
@@ -69,11 +67,13 @@ public class UndirectedGraph implements Graph {
 		checkIndex(v, w);
 		if (adj[v] == null)
 			adj[v] = new HashSet<Integer>();
-		adj[v].add(w);
-
 		if (adj[w] == null)
 			adj[w] = new HashSet<Integer>();
-		if (adj[w].add(v))
+
+		boolean isNewEdge = false;
+		isNewEdge = adj[v].add(w);
+		adj[w].add(v);
+		if (isNewEdge)
 			edgeNum++;
 	}
 
@@ -84,14 +84,66 @@ public class UndirectedGraph implements Graph {
 	 * @param w 顶点2
 	 * @return 两个顶点连通返回true，否则返回false
 	 */
+	@Override
 	public boolean connected(int v, int w) {
+		return connected_bfs(v, w);
+	}
+
+	/**
+	 * 利用BFS算法判断两顶点是否相连通
+	 * 
+	 * @param v 顶点1
+	 * @param w 顶点2
+	 * @return 两顶点连通，返回true，否则返回falsee
+	 */
+	public boolean connected_bfs(int v, int w) {
 		checkIndex(v, w);
-		if(v == w) // 顶点与自身相连通
+		if (v == w)
 			return true;
-		Iterable<Integer> it = bfs(v);
-		for (Integer i : it)
-			if (w == i)
-				return true;
+		boolean[] marked = new boolean[adj.length];
+		marked[v] = true;
+		Queue<Integer> queue = new LinkedQueue<Integer>();
+		queue.offer(v);
+		while (!queue.isEmpty()) {
+			HashSet<Integer> children = adj[queue.poll()];
+			for (Integer ch : children) {
+				if (ch == w)
+					return true;
+				if (marked[ch])
+					continue;
+				marked[ch] = true;
+				queue.offer(ch);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 利用DFS算法判断两顶点是否相连通
+	 * 
+	 * @param v 顶点1
+	 * @param w 顶点2
+	 * @return 两顶点连通，返回true，否则返回false
+	 */
+	public boolean connected_dfs(int v, int w) {
+		checkIndex(v, w);
+		if (v == w)
+			return true;
+		boolean[] marked = new boolean[adj.length];
+		marked[v] = true;
+		Stack<Integer> stack = new LinkedStack<Integer>();
+		stack.push(v);
+		while (!stack.isEmpty()) {
+			HashSet<Integer> children = adj[stack.pop()];
+			for (Integer ch : children) {
+				if (ch == w)
+					return true;
+				if (marked[ch])
+					continue;
+				marked[ch] = true;
+				stack.push(ch);
+			}
+		}
 		return false;
 	}
 
@@ -103,7 +155,7 @@ public class UndirectedGraph implements Graph {
 	 * @return 两个顶点之间的一条路径
 	 */
 	public Iterable<Integer> path(int v, int w) {
-		//TODO
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -126,24 +178,23 @@ public class UndirectedGraph implements Graph {
 	 */
 	public Iterable<Integer> bfs(int v) {
 		checkIndex(v);
+		boolean[] marked = new boolean[adj.length];
+		marked[v] = true;
 		List<Integer> list = new LinkedList<Integer>();
 		list.add(v);
-		boolean[] mark = new boolean[vertexNum]; // 记录是否已经被访问过，默认全部为false
-		mark[v] = true;
-		int cursor = 0;
-		while (cursor < list.size()) {
-			HashSet<Integer> children = adj[list.get(cursor)]; // 当前结点下的下级节点
-			cursor++;
+		// 使用链表+指针来模拟一个队列
+		for (int cursor = 0; cursor < list.size(); cursor++) {
+			HashSet<Integer> children = adj[list.get(cursor)];
 			if (children == null)
 				continue;
 			for (Integer ch : children) {
-				if (mark[ch])
+				if (marked[ch])
 					continue;
+				marked[ch] = true;
 				list.add(ch);
-				mark[ch] = true;
 			}
 		}
-		list.remove(0); // 剔除原始顶点
+		list.remove(0); // 删除初始顶点
 		return list;
 	}
 
@@ -155,21 +206,26 @@ public class UndirectedGraph implements Graph {
 	 */
 	public Iterable<Integer> dfs(int v) {
 		checkIndex(v);
+		boolean[] marked = new boolean[adj.length];
+		marked[v] = true;
+		// 栈无法像队列一样使用链表+指针来模拟，因此将结果记录在新的list中
 		List<Integer> result = new LinkedList<Integer>();
 		Stack<Integer> stack = new LinkedStack<Integer>();
-		boolean[] mark = new boolean[adj.length];
-		mark[v] = true;
 		stack.push(v);
 		while (!stack.isEmpty()) {
-			HashSet<Integer> children = adj[stack.pop()];
+			int current = stack.pop();
+			result.add(current);
+			HashSet<Integer> children = adj[current];
+			if (children == null)
+				continue;
 			for (Integer ch : children) {
-				if (mark[ch])
+				if (marked[ch])
 					continue;
-				result.add(ch);
+				marked[ch] = true;
 				stack.push(ch);
-				mark[ch] = true;
 			}
 		}
+		result.remove(0);
 		return result;
 	}
 
@@ -180,29 +236,31 @@ public class UndirectedGraph implements Graph {
 	 * @return 与指定顶点相连的所有顶点的可迭代对象
 	 */
 	public Iterable<Integer> dfs_r(int v) {
-		boolean[] mark = new boolean[adj.length];
-		mark[v] = true;
-		List<Integer> list = new LinkedList<Integer>();
-		list.add(v);
-		return dfs_r(v, mark, list);
+		checkIndex(v);
+		List<Integer> result = new LinkedList<Integer>();
+		boolean[] marked = new boolean[adj.length];
+		marked[v] = true;
+		return dfs_r(v, marked, result);
 	}
 
-	// dfs的递归实现
-	private Iterable<Integer> dfs_r(int v, boolean[] mark, List<Integer> list) {
+	// DFS的递归实现
+	private Iterable<Integer> dfs_r(int v, boolean[] marked, List<Integer> result) {
+		marked[v] = true;
+		result.add(v);
 		HashSet<Integer> children = adj[v];
+		if (children == null)
+			return result;
 		for (Integer ch : children) {
-			if (mark[ch])
-				continue;
-			mark[ch] = true;
-			list.add(ch);
-			dfs_r(ch, mark, list);
+			if (!marked[ch]) {
+				dfs_r(ch, marked, result);
+			}
 		}
-		return list;
+		return result;
 	}
 
-	// 确保索引不超过顶点的数量
-	private void checkIndex(int... index) {
-		for (int i : index)
+	// 检查索引是否越界
+	private void checkIndex(int... indexes) {
+		for (int i : indexes)
 			if (i < 0 || i >= adj.length)
 				throw new IndexOutOfBoundsException(String.valueOf(i));
 	}
