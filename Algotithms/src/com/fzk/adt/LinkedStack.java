@@ -76,6 +76,20 @@ public class LinkedStack<E> implements Stack<E>, Iterable<E> {
 	}
 
 	/**
+	 * 序列化方法
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("[");
+		for (Node n = top; n != null; n = n.next) {
+			sb.append(n.element);
+			if (n.next != null)
+				sb.append(", ");
+		}
+		return sb.append("]").toString();
+	}
+
+	/**
 	 * 获取迭代器
 	 */
 	@Override

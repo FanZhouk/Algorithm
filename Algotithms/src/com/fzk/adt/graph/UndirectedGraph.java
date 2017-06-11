@@ -94,7 +94,7 @@ public class UndirectedGraph implements Graph {
 	 * 
 	 * @param v 顶点1
 	 * @param w 顶点2
-	 * @return 两顶点连通，返回true，否则返回falsee
+	 * @return 两顶点连通，返回true，否则返回false
 	 */
 	public boolean connected_bfs(int v, int w) {
 		checkIndex(v, w);
@@ -256,6 +256,18 @@ public class UndirectedGraph implements Graph {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * 序列化方法
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(vertexNum() + " vertices, " + edgeNum() + " edges\r\n");
+		for (int i = 0; i < adj.length; i++)
+			sb.append(i + ":" + adj[i].toString() + "\r\n");
+		return sb.toString();
 	}
 
 	// 检查索引是否越界
