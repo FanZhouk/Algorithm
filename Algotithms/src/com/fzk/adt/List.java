@@ -85,6 +85,9 @@ public interface List<E> extends Collection<E> {
 	// 设置指定位置的元素
 	E set(int index, E element);
 
+	// 在首位置添加元素
+	void addFirst(E element);
+
 	// 在指定位置增加元素
 	void add(int index, E element);
 

@@ -180,6 +180,7 @@ public class LinkedList<E> implements List<E>, Stack<E>, Iterable<E> {
 	/**
 	 * 添加指定集合中的全部元素
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		Iterator<?> it = c.iterator();
@@ -266,14 +267,21 @@ public class LinkedList<E> implements List<E>, Stack<E>, Iterable<E> {
 	}
 
 	/**
+	 * 在首位置添加元素
+	 */
+	public void addFirst(E element) {
+		add(0, element);
+	}
+
+	/**
 	 * 在指定索引位置添加
 	 */
 	@Override
 	public void add(int index, E element) {
-		Node<E> node = node(index);
-		Node<E> newNode = new Node<E>(element, node.previous, node);
-		node.previous.next = newNode;
-		node.next.previous = newNode;
+		if (size == 0)
+			addBefore(header, element);
+		else
+			addBefore(node(index), element);
 	}
 
 	/**
