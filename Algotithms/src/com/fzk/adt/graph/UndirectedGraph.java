@@ -57,6 +57,17 @@ public class UndirectedGraph implements Graph {
 	}
 
 	/**
+	 * 获取指定顶点可达的所有顶点的可迭代对象
+	 * 
+	 * @param v 顶点
+	 * @return 顶点可达的所有顶点的可迭代对象
+	 */
+	@Override
+	public Iterable<Integer> adjacent(int v) {
+		return adj[v] != null ? adj[v] : new HashSet<Integer>();
+	}
+
+	/**
 	 * 在两个顶点之间创建一条连接
 	 * 
 	 * @param v 顶点1

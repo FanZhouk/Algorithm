@@ -1,6 +1,7 @@
 package com.fzk.adt.graph;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import com.fzk.adt.LinkedList;
 import com.fzk.adt.LinkedQueue;
@@ -55,6 +56,17 @@ public class DirectedGraph implements Graph {
 	@Override
 	public int edgeNum() {
 		return edgeNum;
+	}
+
+	/**
+	 * 获取指定顶点可达的所有顶点的可迭代对象
+	 * 
+	 * @param v 顶点
+	 * @return 顶点可达的所有顶点的可迭代对象，若没有返回空集合
+	 */
+	@Override
+	public Iterable<Integer> adjacent(int v) {
+		return adj[v] != null ? adj[v] : new HashSet<Integer>();
 	}
 
 	/**
@@ -275,6 +287,97 @@ public class DirectedGraph implements Graph {
 	public boolean hasCycle() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/**
+	 * 若该有向图存在环，则返回第一个查找到的环中所有顶点的可迭代对象
+	 * 
+	 * @return 有环则返回环中顶点，无环则返回null
+	 */
+	public Iterator<Integer> cycle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// TODO:给三个排序方法添加有向无环图的验证
+	/**
+	 * 拓扑排序——前序
+	 * 
+	 * @return 前序排序结果
+	 */
+	public Iterable<Integer> preOrder() {
+		return new DepthFirstOrder(this).preOrder();
+	}
+
+	/**
+	 * 拓扑排序——后序
+	 * 
+	 * @return 后序排序结果
+	 */
+	public Iterable<Integer> postOrder() {
+		return new DepthFirstOrder(this).postOrder();
+	}
+
+	/**
+	 * 拓扑排序——逆后序
+	 * 
+	 * @return 逆后序排序结果
+	 */
+	public Iterable<Integer> reversePostOrder() {
+		return new DepthFirstOrder(this).reversePostOrder();
+	}
+
+	/**
+	 * 基于深度优先搜索的顶点排序
+	 * 
+	 * 包括前序、后序、逆后序
+	 */
+	private class DepthFirstOrder {
+
+		List<Integer> preOrder; // 前序排列结果
+		List<Integer> postOrder; // 后序排列结果
+		List<Integer> reversePostOrder; // 逆后序排列结果
+		boolean[] marked;
+
+		// 根据给定图计算排列结果
+		DepthFirstOrder(DirectedGraph graph) {
+			preOrder = new LinkedList<Integer>();
+			postOrder = new LinkedList<Integer>();
+			reversePostOrder = new LinkedList<Integer>();
+			marked = new boolean[graph.vertexNum()];
+
+			// 对所有未访问过的顶点进行DFS遍历，并记录结果
+			for (int v = 0; v < marked.length; v++)
+				if (!marked[v])
+					dfsOrder(graph, v);
+		}
+
+		// DFS搜索，并构造排序结果
+		// 由于后序排列的非递归形式较复杂，因此采用递归
+		public void dfsOrder(DirectedGraph graph, int v) {
+			preOrder.add(v);				// 构造前序排列
+			marked[v] = true;
+			for (int w : graph.adjacent(v))
+				if (!marked[w])
+					dfsOrder(graph, w);
+			postOrder.add(v);				// 构造后序排列
+			reversePostOrder.addFirst(v);	// 构造逆后序排列
+		}
+
+		// 获取前序排列结果
+		Iterable<Integer> preOrder() {
+			return preOrder;
+		}
+
+		// 获取后序排列结果
+		Iterable<Integer> postOrder() {
+			return postOrder;
+		}
+
+		// 获取逆后序排列结果
+		Iterable<Integer> reversePostOrder() {
+			return reversePostOrder;
+		}
 	}
 
 	/**
