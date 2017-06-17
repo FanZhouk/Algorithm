@@ -2,6 +2,7 @@ package com.fzk.adt.graph;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.fzk.adt.LinkedList;
 import com.fzk.adt.LinkedQueue;
@@ -12,8 +13,7 @@ import com.fzk.adt.Stack;
 
 /**
  * 有向图数据结构
- * 不支持增删顶点，不支持平行边
- * TODO:对自环的处理
+ * 不支持增删顶点，不支持平行边，支持自环
  * 
  * @author fanzhoukai
  *
@@ -59,10 +59,10 @@ public class DirectedGraph implements Graph {
 	}
 
 	/**
-	 * 获取指定顶点可达的所有顶点的可迭代对象
+	 * 获取与指定顶点直接相连的所有顶点的可迭代对象
 	 * 
 	 * @param v 顶点
-	 * @return 顶点可达的所有顶点的可迭代对象，若没有返回空集合
+	 * @return 与指定顶点直接相连的所有顶点的可迭代对象
 	 */
 	@Override
 	public Iterable<Integer> adjacent(int v) {
@@ -93,18 +93,18 @@ public class DirectedGraph implements Graph {
 	 * @return 存在有向路径返回true，否则返回false
 	 */
 	@Override
-	public boolean connected(int v, int w) {
-		return connected_bfs(v, w);
+	public boolean hasPath(int v, int w) {
+		return hasPath_bfs(v, w);
 	}
 
 	/**
-	 * 利用BFS算法判断两顶点是否相连通
+	 * 利用BFS算法判断顶点1到顶点2是否存在一条有向路径
 	 * 
 	 * @param v 顶点1
 	 * @param w 顶点2
-	 * @return 两顶点连通，返回true，否则返回false
+	 * @return 存在有向路径返回true，否则返回false
 	 */
-	public boolean connected_bfs(int v, int w) {
+	public boolean hasPath_bfs(int v, int w) {
 		checkIndex(v, w);
 		if (v == w)
 			return true;
@@ -114,6 +114,8 @@ public class DirectedGraph implements Graph {
 		queue.offer(v);
 		while (!queue.isEmpty()) {
 			HashSet<Integer> children = adj[queue.poll()];
+			if (children == null)
+				continue;
 			for (Integer ch : children) {
 				if (ch == w)
 					return true;
@@ -127,13 +129,13 @@ public class DirectedGraph implements Graph {
 	}
 
 	/**
-	 * 利用DFS算法判断两顶点是否相连通
+	 * 利用DFS算法判断顶点1到顶点2是否存在一条有向路径
 	 * 
 	 * @param v 顶点1
 	 * @param w 顶点2
-	 * @return 两顶点连通，返回true，否则返回false
+	 * @return 存在有向路径返回true，否则返回false
 	 */
-	public boolean connected_dfs(int v, int w) {
+	public boolean hasPath_dfs(int v, int w) {
 		checkIndex(v, w);
 		if (v == w)
 			return true;
@@ -143,6 +145,8 @@ public class DirectedGraph implements Graph {
 		stack.push(v);
 		while (!stack.isEmpty()) {
 			HashSet<Integer> children = adj[stack.pop()];
+			if (children == null)
+				continue;
 			for (Integer ch : children) {
 				if (ch == w)
 					return true;
@@ -153,6 +157,58 @@ public class DirectedGraph implements Graph {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 判断两顶点是否强连通
+	 * 
+	 * @param v 顶点1
+	 * @param w 顶点2
+	 * @return 两顶点强连通返回true，否则返回false
+	 */
+	public boolean stronglyConnected(int v, int w) {
+		return hasPath_bfs(v, w) && hasPath_bfs(w, v);
+	}
+
+	/**
+	 * 返回有向图中强连通分量的数量
+	 * TODO:此处使用最原始的O(n^2)方式，需要改成Kosaraju算法
+	 * 
+	 * @return 强连通分量的数量
+	 */
+	public int sccNum() {
+		Set<HashSet<Integer>> scc = new HashSet<HashSet<Integer>>();
+		boolean[] marked = new boolean[adj.length];
+		for (int v = 0; v < adj.length; v++) {
+			if (marked[v])
+				continue;
+			for (int w = 0; w < adj.length; w++) {
+				if (marked[w])
+					continue;
+				if (stronglyConnected(v, w)) {
+					boolean find = false;
+					for (HashSet<Integer> set : scc) {
+						if (set.contains(v)) {
+							set.add(w);
+							find = true;
+							break;
+						}
+						if (set.contains(w)) {
+							set.add(v);
+							find = true;
+							break;
+						}
+					}
+					if (!find) {
+						HashSet<Integer> newSet = new HashSet<Integer>();
+						newSet.add(v);
+						newSet.add(w);
+						scc.add(newSet);
+					}
+				}
+			}
+		}
+		return scc.size();
 	}
 
 	/**
