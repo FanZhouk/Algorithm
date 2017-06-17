@@ -57,10 +57,10 @@ public class UndirectedGraph implements Graph {
 	}
 
 	/**
-	 * 获取指定顶点可达的所有顶点的可迭代对象
+	 * 获取与指定顶点直接相连的所有顶点的可迭代对象
 	 * 
 	 * @param v 顶点
-	 * @return 顶点可达的所有顶点的可迭代对象
+	 * @return 与指定顶点直接相连的所有顶点的可迭代对象
 	 */
 	@Override
 	public Iterable<Integer> adjacent(int v) {
@@ -96,8 +96,8 @@ public class UndirectedGraph implements Graph {
 	 * @return 两个顶点连通返回true，否则返回false
 	 */
 	@Override
-	public boolean connected(int v, int w) {
-		return connected_bfs(v, w);
+	public boolean hasPath(int v, int w) {
+		return hasPath_bfs(v, w);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class UndirectedGraph implements Graph {
 	 * @param w 顶点2
 	 * @return 两顶点连通，返回true，否则返回false
 	 */
-	public boolean connected_bfs(int v, int w) {
+	public boolean hasPath_bfs(int v, int w) {
 		checkIndex(v, w);
 		if (v == w)
 			return true;
@@ -117,6 +117,8 @@ public class UndirectedGraph implements Graph {
 		queue.offer(v);
 		while (!queue.isEmpty()) {
 			HashSet<Integer> children = adj[queue.poll()];
+			if (children == null)
+				continue;
 			for (Integer ch : children) {
 				if (ch == w)
 					return true;
@@ -136,7 +138,7 @@ public class UndirectedGraph implements Graph {
 	 * @param w 顶点2
 	 * @return 两顶点连通，返回true，否则返回false
 	 */
-	public boolean connected_dfs(int v, int w) {
+	public boolean hasPath_dfs(int v, int w) {
 		checkIndex(v, w);
 		if (v == w)
 			return true;
@@ -146,6 +148,8 @@ public class UndirectedGraph implements Graph {
 		stack.push(v);
 		while (!stack.isEmpty()) {
 			HashSet<Integer> children = adj[stack.pop()];
+			if (children == null)
+				continue;
 			for (Integer ch : children) {
 				if (ch == w)
 					return true;

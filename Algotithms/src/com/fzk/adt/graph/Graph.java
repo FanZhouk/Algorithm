@@ -22,10 +22,10 @@ public interface Graph {
 	public int edgeNum();
 
 	/**
-	 * 获取指定顶点可达的所有顶点的可迭代对象
+	 * 获取与指定顶点直接相连的所有顶点的可迭代对象
 	 * 
 	 * @param v 顶点
-	 * @return 顶点可达的所有顶点的可迭代对象
+	 * @return 与指定顶点直接相连的所有顶点的可迭代对象
 	 */
 	public Iterable<Integer> adjacent(int v);
 
@@ -44,7 +44,7 @@ public interface Graph {
 	 * @param w 顶点2
 	 * @return 两个顶点连通返回true，否则返回false
 	 */
-	public boolean connected(int v, int w);
+	public boolean hasPath(int v, int w);
 
 	/**
 	 * 获取与指定结点相连的所有顶点的可迭代对象
