@@ -278,10 +278,7 @@ public class LinkedList<E> implements List<E>, Stack<E>, Iterable<E> {
 	 */
 	@Override
 	public void add(int index, E element) {
-		if (size == 0)
-			addBefore(header, element);
-		else
-			addBefore(node(index), element);
+		addBefore(size == 0 ? header : node(index), element);
 	}
 
 	/**
