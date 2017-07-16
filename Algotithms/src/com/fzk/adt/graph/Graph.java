@@ -1,7 +1,7 @@
 package com.fzk.adt.graph;
 
 /**
- * 图结构接口
+ * 无权图结构接口
  * 
  * @author fanzhoukai
  *
