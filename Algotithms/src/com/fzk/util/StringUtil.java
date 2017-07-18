@@ -44,8 +44,8 @@ public class StringUtil {
 				count[str.charAt(d) + 1]++;
 			for (int i = 1; i <= R; i++)
 				count[i] += count[i - 1];
-			for (int i = 0; i < arr.length; i++)
-				aux[count[arr[i].charAt(d)]++] = arr[i];
+			for (String str : arr)
+				aux[count[str.charAt(d)]++] = str;
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = aux[i];
 		}
@@ -58,8 +58,7 @@ public class StringUtil {
 	 */
 	public static void sort_MSD(String[] arr) {
 		int M = 15; // 小数组的切换阈值
-		String[] aux; // 辅助数组
-		aux = new String[arr.length];
+		String[] aux = new String[arr.length]; // 辅助数组
 		sort_MSD(arr, 0, arr.length - 1, 0, M, aux);
 
 	}
@@ -67,10 +66,23 @@ public class StringUtil {
 	// 以第d个字符为键将arr[low]至arr[high]排序
 	private static void sort_MSD(String[] arr, int lo, int hi, int d, int M, String[] aux) {
 		if (hi <= lo + M) {
-			// TODO 使用插入排序，要写插入排序的通用方法
+			SortUtil.insertionSort(arr, lo, hi);
+			return;
 		}
+		int[] count = new int[R + 2];
+		for (int i = lo; i <= hi; i++)
+			count[charAt(arr[i], d) + 2]++;
+		for (int r = 0; r < R + 1; r++)
+			count[r + 1] += count[r];
+		for (int i = lo; i <= hi; i++)
+			aux[count[charAt(arr[i], d) + 1]++] = arr[i];
+		for (int i = lo; i <= hi; i++)
+			arr[i] = aux[i - lo];
+		for (int r = 0; r < R; r++)
+			sort_MSD(arr, lo + count[r], lo + count[r + 1]-1, d + 1, M, aux);
 	}
 
+	// 获取字符串指定位置的字符，越界返回-1
 	private static int charAt(String str, int d) {
 		if (d < str.length())
 			return str.charAt(d);
