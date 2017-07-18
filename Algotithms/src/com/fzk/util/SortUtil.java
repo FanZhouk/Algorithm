@@ -1,5 +1,7 @@
 package com.fzk.util;
 
+import java.awt.Container;
+
 /**
  * 排序工具类
  * 
@@ -76,6 +78,26 @@ public class SortUtil {
 				arr[ind] = arr[ind - 1];
 			}
 			arr[ind] = val;
+		}
+	}
+
+	/**
+	 * 指定索引的插入排序，从low至high（均包括）部分进行排序
+	 * 
+	 * @param arr 要排序的数组
+	 * @param low 低位
+	 * @param high 高位
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K> void insertionSort(Comparable<K>[] arr, int low, int high) {
+		for (int i = low + 1; i <= high; i++) {
+			if (arr[i].compareTo((K) arr[i - 1]) >= 0)
+				continue;
+			int j = i - 1;
+			Comparable<K> val = arr[i]; // 要插入的元素
+			while (j >= low && arr[j].compareTo((K) val) > 0)
+				arr[j + 1] = arr[j--];
+			arr[j + 1] = val;
 		}
 	}
 
